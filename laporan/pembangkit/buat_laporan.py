@@ -331,7 +331,7 @@ def ringkasan():
         ["Masalah", "Petani padi dan jagung di Bogor memberi pupuk dari kebiasaan atau ikut-ikutan tetangga padahal kondisi hara antarpetak berbeda. Uji tanah laboratorium berbayar dan lambat, sedangkan aplikasi peta hara yang ada, termasuk SAFRONS yang kami audit, berhenti pada saran umum tanpa angka dosis."],
         ["Solusi AI", "PupukPintar, aplikasi web mobile-first yang memprediksi dosis pupuk N, P, K (kg/ha) spesifik per lahan dengan model Random Forest, lengkap keyakinan, konversi kebutuhan per petak, estimasi biaya, dan paket sesuai modal."],
         ["Pendekatan AI dan data", "Predictive sebagai inti (Random Forest Regressor, 300 pohon), rule-based sebagai pelindung (rentang aman Permentan 40/2007, kaidah Balittanah, peringatan pengapuran), dan penjelasan berbasis templat. Data latih 6.000 baris proxy hasil ekstraksi logika tabel resmi."],
-        ["Hasil uji utama", f"Agreement rekomendasi dalam rentang pakar {str(CV['agreement_persen']).replace('.', ',')} persen (uji silang 5-fold) dan {str(HOLD['agreement_persen']).replace('.', ',')} persen pada data holdout 20 persen, melampaui target MVQ 85 sampai 90 persen. MAE 3,6 kg/ha untuk N, 2,4 untuk P, dan 2,1 untuk K. Latensi API rata-rata 71 milidetik. Seluruh 12 pengujian API dan 19 langkah uji antarmuka lulus."],
+        ["Hasil uji utama", f"Agreement rekomendasi dalam rentang pakar {str(CV['agreement_persen']).replace('.', ',')} persen (uji silang 5-fold) dan {str(HOLD['agreement_persen']).replace('.', ',')} persen pada data holdout 20 persen, melampaui target MVQ 85 sampai 90 persen. MAE 3,6 kg/ha untuk N, 2,4 untuk P, dan 2,1 untuk K. Latensi API rata-rata 71 milidetik. Seluruh 12 pengujian API dan 20 langkah uji antarmuka lulus."],
         ["Status MVQ", "Tercapai untuk enam dimensi yang dapat diuji tanpa pengguna sasaran (akurasi, waktu respons, guardrail, explainability, cakupan domain, alur singkat). Kepuasan petani belum diukur karena uji lapangan bersama poktan masih direncanakan dan itu kami nyatakan sebagai keterbatasan."],
         ["Biaya operasional", "Sekitar Rp 90.000 per bulan untuk satu server kecil pada skenario pilot (belum memakai LLM sehingga tidak ada biaya token), atau sekitar Rp 240 per prediksi pada skenario pilot dan turun ke sekitar Rp 12 per prediksi pada skenario 500 petani."],
         ["Risiko utama dan mitigasi", "Rekomendasi keliru pada kondisi yang jarang ada di data latih. Mitigasi yang sudah berjalan dan diuji: keluaran dikunci rentang aman resmi, keyakinan rendah atau input di luar sebaran membuat sistem menolak menampilkan angka, dan hasil diarahkan ke verifikasi penyuluh atau uji laboratorium."],
@@ -373,7 +373,7 @@ def bab1():
 
     h2("1.4 Ruang lingkup")
     tabel("Tabel 1.3 Ruang lingkup MVP", ["Dikerjakan di versi MVP", "Sengaja tidak dikerjakan", "Alasan"], [
-        ["Input lahan lewat peta hara SAFRONS atau hasil uji tanah", "Diagnosis hama dan penyakit dari foto", "Fitur inti memprediksi dari angka, bukan citra, dan beban pengumpulan data foto besar"],
+        ["Input lahan: gambar petak sendiri di peta, pilih unit peta SAFRONS, atau hasil uji tanah", "Diagnosis hama dan penyakit dari foto", "Fitur inti memprediksi dari angka, bukan citra, dan beban pengumpulan data foto besar"],
         ["Prediksi dosis NPK dengan keyakinan dan guardrail", "Draf RDKK otomatis tingkat kelompok", "Butuh akumulasi data banyak petani yang belum ada"],
         ["Konversi kebutuhan pupuk per petak, estimasi biaya, dan paket", "Agen AI yang mengeksekusi otomatis (memesan pupuk, memfinalkan dokumen)", "Keputusan berisiko tinggi tetap pada manusia (prinsip augmented)"],
         ["Penjelasan bahasa sederhana dan peringatan dini", "Peta hara kolaboratif real-time", "Data uji tanah petani baru terkumpul setelah pilot"],
@@ -603,7 +603,7 @@ def bab5():
     p("Perubahan sejak AI PRD v1.0 (UTS) dan alasannya:")
     tabel("Tabel 5.1 Perubahan spesifikasi sejak versi UTS", ["Bagian PRD", "Isi di v1.0 (UTS)", "Isi di versi final", "Alasan berubah"], [
         ["Penjelasan rekomendasi", "Model bahasa generatif menyusun penjelasan", "Templat rule-based menyusun penjelasan dari status hara", "Meniadakan risiko angka dikarang, biaya nol, latensi nol, tetap akurat terhadap data model"],
-        ["Sumber input peta", "Peta 191 area SAFRONS", "Data spasial asli SAFRONS (191 area) dari kode yang kami audit, dengan konversi band ke skala model", "Data asli ternyata tersedia di repositori audit sehingga demo memakai peta sungguhan, bukan representasi"],
+        ["Sumber input peta", "Peta 191 area SAFRONS", "Alat gambar petak: petani melukis batas petaknya di peta, luas terukur otomatis dari geometri, nilai hara dari unit SAFRONS tempat pusat petak berada; unit lanskap tetap bisa dipilih langsung", "Unit lanskap SAFRONS berbentuk besar sehingga tidak mewakili petak petani, gambaran sendiri membuat bentuk dan luas lahan persis"],
         ["Server API", "FastAPI sesuai LKP-P6", "Server pustaka standar Python dengan kontrak JSON sama", "Ekstensi biner pydantic-core diblokir kebijakan Application Control pada mesin anggota, kontrak tidak berubah sehingga migrasi ke FastAPI mudah (Bab 7.6)"],
         ["Estimasi biaya", "Harga pupuk rujukan umum", "Harga HET Urea Rp 2.250 dan SP-36 Rp 2.300 per kg, KCl pasar Rp 5.000 per kg (asumsi tim)", "Kalkulasi biaya jadi bisa ditelusuri dan diuji konsistensinya"],
     ], lebar=[2.8, 4.0, 4.6, 4.6], ukuran=9)
@@ -611,7 +611,7 @@ def bab5():
     h2("5.2 Functional requirements")
     tabel("Tabel 5.2 Daftar fitur dengan user story, prioritas MoSCoW, dan status", ["ID", "Fitur", "User story", "MoSCoW", "AI atau non-AI", "Status"], [
         ["F-01", "Onboarding dan persetujuan data", "Sebagai petani, saya ingin memberi persetujuan data sejak awal, agar saya tahu data saya dipakai untuk apa dan bisa berhenti kapan saja", "Must", "Non-AI", "Selesai"],
-        ["F-02", "Daftar lahan via peta hara SAFRONS atau uji tanah", "Sebagai petani, saya ingin mendaftarkan lahan dengan menandai areanya di peta atau memasukkan hasil uji tanah, agar kondisi hara lahan saya dikenali tanpa lab", "Must", "Non-AI (data spasial)", "Selesai"],
+        ["F-02", "Daftar lahan: gambar petak di peta, pilih unit, atau uji tanah", "Sebagai petani, saya ingin menggambar batas petak saya di peta sehingga luas dan bentuknya persis, atau memakai unit peta dan hasil uji tanah, agar kondisi hara lahan saya dikenali tanpa lab", "Must", "Non-AI (data spasial)", "Selesai"],
         ["F-03", "Rekomendasi dosis NPK dengan keyakinan", "Sebagai petani, saya ingin menerima angka dosis N, P, K spesifik lahan saya beserta tingkat keyakinan, agar saya tidak lagi menebak takaran", "Must", "AI (predictive + guardrail)", "Selesai"],
         ["F-04", "Konversi per petak, estimasi biaya, paket modal", "Sebagai petani, saya ingin tahu berapa kg pupuk yang harus dibeli dan biayanya, dengan pilihan paket sesuai modal, agar rekomendasi langsung bisa dijalankan", "Must", "Non-AI (kalkulasi deterministik)", "Selesai"],
         ["F-05", "Penjelasan bahasa sederhana", "Sebagai petani awam agronomi, saya ingin tahu alasan rekomendasinya, agar saya paham sebelum menjalankannya", "Should", "AI (templat rule-based)", "Selesai"],
@@ -634,7 +634,7 @@ def bab5():
     h2("5.4 Tabel penelusuran fitur")
     tabel("Tabel 5.4 Penelusuran fitur ke desain, komponen teknis, dan skenario uji", ["ID fitur", "Layar (Bab 6)", "Komponen teknis (Bab 7)", "Skenario uji (Bab 8)"], [
         ["F-01", "Splash dan onboarding", "Halaman splash dengan kotak centang consent, state localStorage", "S-01"],
-        ["F-02", "Lahan Saya, tambah lahan, peta hara, uji tanah", "GET /api/peta, peta Leaflet interaktif 191 area SAFRONS, formulir uji tanah dengan validasi", "S-02, S-03"],
+        ["F-02", "Lahan Saya, tambah lahan, peta hara, uji tanah", "GET /api/peta, peta Leaflet dengan alat gambar petak (luas geodesik otomatis), pilih unit SAFRONS, formulir uji tanah dengan validasi", "S-02, S-03"],
         ["F-03", "Rekomendasi (formulir dan hasil)", "POST /rekomendasi, mesin model.py, guardrail konstanta.py", "S-04, S-05"],
         ["F-04", "Hasil (kebutuhan, biaya, paket)", "Konversi kadar unsur Urea 46 persen, SP-36 30 persen, KCl 60 persen, harga di konstanta.py", "S-04"],
         ["F-05", "Hasil (penjelasan sederhana)", "Templat penjelasan dari status hara di model.py", "S-04"],
@@ -687,7 +687,7 @@ def bab6():
     gambar(os.path.join(LAYAR, "01-splash.png"), "Gambar 6.5 Layar entry point terbangun", 6.4)
     gambar(os.path.join(LAYAR, "08-form-rekomendasi.png"), "Gambar 6.6 Layar formulir rekomendasi terbangun", 6.4)
     gambar(os.path.join(LAYAR, "09-hasil-rekomendasi.png"), "Gambar 6.7 Layar hasil rekomendasi terbangun (padi, target 6 t/ha, luas 0,5 ha, keyakinan 81 persen)", 6.4)
-    gambar(os.path.join(LAYAR, "04-peta-hara.png"), "Gambar 6.8 Peta hara 191 area SAFRONS di atas basemap OpenStreetMap (Leaflet) untuk pendaftaran lahan", 6.4)
+    gambar(os.path.join(LAYAR, "04-peta-hara.png"), "Gambar 6.8 Menggambar petak di atas peta 191 area SAFRONS (Leaflet, basemap OpenStreetMap), luas terukur otomatis dari geometri", 6.4)
 
     h2("6.3 Tipe antarmuka dan tingkat otomasi")
     tabel(None, ["Pilihan", "Isi dan alasan"], [
@@ -807,13 +807,13 @@ def bab8():
 
     h2("8.1 Rancangan uji")
     p("Tujuan dan hipotesis uji: model mencapai agreement pakar minimal 85 sampai 90 persen pada data yang tidak dipakai melatih, guardrail tidak pernah melepas keluaran di luar rentang aman, dan petani dengan literasi digital umum menyelesaikan alur dari beranda sampai hasil dalam maksimal lima ketukan tanpa tersesat.")
-    p("Waktu dan cara uji: pengujian model dan API berlangsung terotomasi pada mesin pengembangan (pytest, 12 pengujian), pengujian antarmuka berlangsung terotomasi dengan Playwright pada Chromium lebar 390 piksel (19 langkah), dan pengukuran latensi API berlangsung dengan 30 permintaan beruntun. Semua uji dapat diulang dengan perintah pada README repositori.")
+    p("Waktu dan cara uji: pengujian model dan API berlangsung terotomasi pada mesin pengembangan (pytest, 12 pengujian), pengujian antarmuka berlangsung terotomasi dengan Playwright pada Chromium lebar 390 piksel (20 langkah), dan pengukuran latensi API berlangsung dengan 30 permintaan beruntun. Semua uji dapat diulang dengan perintah pada README repositori.")
     tabel("Tabel 8.1 Profil penguji dan kedudukannya", ["Kode", "Peran", "Keterangan", "Catatan jujur"], [
         ["U-01 sampai U-03", "Anggota tim sebagai penguji alur (tiga orang)", "Menjalankan dan memeriksa 18 langkah uji perjalanan", "Anggota tim bukan pengguna sasaran. Uji petani sasaran dijadwalkan pada pilot Bab 11, status ini juga dicatat di Bab 12.2"],
     ], lebar=[2.6, 4.2, 5.2, 4.0], ukuran=9.5)
     tabel("Tabel 8.2 Skenario uji", ["ID", "Skenario atau tugas", "Fitur (ID)", "Kriteria berhasil"], [
         ["S-01", "Masuk aplikasi tanpa mencentang persetujuan lalu dengan mencentang", "F-01", "Pesan galat tampil tanpa centang, masuk berhasil dengan centang"],
-        ["S-02", "Mendaftar lahan dari peta hara (ketuk area, isi nama, pakai area)", "F-02", "Lahan muncul di daftar dengan chip status hara"],
+        ["S-02", "Menggambar petak 4 titik di peta lalu menyimpannya, termasuk uji mode pilih unit dengan klik koordinat", "F-02", "Luas terukur otomatis 0,5 ha pada gambaran uji, lahan tersimpan berlabel dari gambar peta"],
         ["S-03", "Mendaftar lahan dari uji tanah, termasuk percobaan pH 9,4", "F-02", "pH 9,4 ditolak dengan pesan, input wajar tersimpan"],
         ["S-04", "Menghitung rekomendasi padi pada lahan uji tanah, mengganti paket optimal, mengirim ke penyuluh, membuka riwayat", "F-03 sampai F-07", "Hasil tampil, paket mengubah biaya, riwayat terisi"],
         ["S-05", "Menghitung rekomendasi pada lahan dengan P 150 ppm (luar sebaran)", "F-03, F-06", "Angka disembunyikan, arahan uji lab tampil"],
@@ -843,8 +843,8 @@ def bab8():
     ], lebar=[4.6, 3.2, 3.4, 4.8], ukuran=10)
 
     h2("8.3 Hasil usability dan kepercayaan")
-    tabel("Tabel 8.5 Hasil uji perjalanan antarmuka (19 langkah, Chromium 390 piksel)", ["Metrik", "Cara mengukur", "Hasil"], [
-        ["Tingkat keberhasilan langkah", "Langkah lulus dibagi seluruh langkah", "19 dari 19 (100 persen)"],
+    tabel("Tabel 8.5 Hasil uji perjalanan antarmuka (20 langkah, Chromium 390 piksel)", ["Metrik", "Cara mengukur", "Hasil"], [
+        ["Tingkat keberhasilan langkah", "Langkah lulus dibagi seluruh langkah", "20 dari 20 (100 persen)"],
         ["Alur kritis tiga ketukan", "Penghitungan ketukan pada skenario S-04", "3 ketukan dari beranda sampai hasil"],
         ["Kejadian tersesat atau galat konsol", "Perekaman konsol browser selama perjalanan", "Nol galat konsol"],
         ["Luapan tampilan", "Pengukuran scrollWidth pada empat layar kunci", "Nol piksel luapan"],
@@ -860,6 +860,7 @@ def bab8():
         ["Peta grid awal berupa representasi buatan, bukan data asli", "Perbandingan peta versi awal dengan data sumber SAFRONS", "Input lahan tidak memakai peta sungguhan", "Rendah", "Diganti peta spasial asli 191 area SAFRONS (Leaflet) setelah data ditemukan di repositori audit"],
         ["Konversi kebutuhan petak tidak bisa dihitung ulang dari angka tampilan", "Uji konsistensi konversi pytest gagal di versi awal", "Petani tidak bisa memeriksa 71 kg/ha kali 0,75 ha dibagi 0,30", "Sedang", "Dosis dibulatkan sejak awal sehingga semua turunan konsisten, uji lulus"],
         ["Area terpilih pada peta kadang tidak sesuai poligon yang dituju pengguna", "Laporan pengguna saat mencoba peta, dikonfirmasi perbandingan titik klik dengan area terpilih", "Pengguna menekan poligon A tetapi kartu detail menunjukkan area lain", "Sedang", "Pemilihan area dihitung dari titik ketuk memakai uji titik-dalam-poligon, highlight dipindah ke lapisan non-interaktif, dan opsi tap Leaflet dihapus. Verifikasi otomatis: klik titik -6,6 106,8 kini selalu memilih area Bogor"],
+        ["Unit lanskap SAFRONS berukuran besar sehingga tidak mewakili petak petani", "Perbandingan bentuk unit lanskap dengan petak tipikal 0,25 sampai 2 hektar", "Bentuk dan luas lahan terpilih tidak sesuai lahan nyata pengguna", "Tinggi", "Alat gambar petak ditambahkan sebagai jalur utama F-02: petani melukis batasnya, luas dihitung geodesik dari geometri, nilai hara dari unit tempat pusat petak"],
     ], lebar=[4.0, 3.8, 3.6, 1.8, 4.0], ukuran=9)
 
     h2("8.5 Iterasi yang dilakukan")
@@ -869,6 +870,7 @@ def bab8():
         ["3", "Dosis dibulatkan ke kg/ha utuh sebelum konversi kebutuhan dan biaya", "Uji konsistensi konversi, agar petani bisa memeriksa ulang angka"],
         ["4", "Luas petak selalu terisi dari lahan terpilih", "Konsistensi nilai bawaan formulir"],
         ["5", "Pemilihan area peta berbasis titik ketuk dengan highlight non-interaktif", "Laporan ketidaksesuaian area terpilih pada peta"],
+        ["6", "Alat gambar petak ditambahkan sebagai jalur utama pendaftaran lahan, luas terukur otomatis dari geometri", "Unit lanskap SAFRONS berbentuk besar dan tidak mewakili petak individu"],
     ], lebar=[1.4, 7.0, 7.6], ukuran=9.5)
 
     h2("8.6 Status akhir MVQ")
@@ -1167,12 +1169,13 @@ def lampiran():
         ["Tinggi", "N di bawah 5,5, P di bawah 9,0, K di bawah 447,9", "0,50", "40,0", "0,60"],
         ["Sangat tinggi", "nilai pada atau di atas ambang terakhir", "0,85", "90,0", "1,00"],
     ], lebar=[3.0, 6.6, 2.2, 2.2, 2.0], ukuran=9.5)
+    p("Untuk petak yang digambar pengguna pada alat gambar (F-02), luas dihitung dari geometri gambaran memakai rumus luas poligon pada bola Chamberlain-Duquette dengan radius rata-rata 6.371.008,8 meter, kemudian nilai hara diambil dari unit SAFRONS tempat pusat petak berada (bila pusat jatuh di celah antar unit, dipakai unit terdekat menurut jarak titik ke titik terdekat unit). Geometri gambaran disimpan bersama lahan.")
     p("Nilai perwakilan dipilih agar status hara menurut batas kelas Balittanah yang kami pakai (Bab 3) jatuh pada kelas yang sama dengan band aslinya, sehingga rekomendasi dari peta konsisten dengan pembacaan SAFRONS. Area tanpa data (3 area) tidak dapat dipilih, meniru perilaku SAFRONS.")
 
     h2("Lampiran D. Hasil pengujian (data mentah)")
     p("Data mentah lengkap tersimpan di repositori dan dapat diulang siapa pun:")
     bullet("tests/test_api.py, 12 pengujian pytest (kontrak, guardrail 45 kombinasi ekstrem, luar sebaran, input buruk, determinisme, konversi dan biaya, paket, peringatan pH, model info dan peta, berkas statis, latensi p95). Hasil terakhir 12 lulus.")
-    bullet("tests/perjalanan_ui.py, 19 langkah Playwright pada Chromium 390 piksel dengan pemeriksaan luapan horizontal, verifikasi ketepatan klik peta pada koordinat yang diketahui, dan perekaman galat konsol. Hasil terakhir 19 lulus tanpa galat konsol, tangkapan layarnya di docs/tangkapan-layar.")
+    bullet("tests/perjalanan_ui.py, 20 langkah Playwright pada Chromium 390 piksel dengan pemeriksaan luapan horizontal, penggambaran petak, verifikasi ketepatan klik peta pada koordinat yang diketahui, dan perekaman galat konsol. Hasil terakhir 20 lulus tanpa galat konsol, tangkapan layarnya di docs/tangkapan-layar.")
     bullet("tests/hasil_evaluasi_tambahan.json, hasil baseline, kalibrasi keyakinan, dan contoh prediksi.")
     bullet("docs/perjalanan_ui_hasil.txt, catatan keluaran perjalanan UI.")
     p("Formulir umpan balik pengguna (untuk pilot, siap dipakai, skala 1 sangat tidak setuju sampai 5 sangat setuju):")

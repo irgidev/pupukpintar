@@ -80,11 +80,43 @@ def jalankan():
         hal.wait_for_selector("#peta-leaflet .leaflet-overlay-pane path:not([d='M0 0'])", timeout=20000)
         cek_luapan(hal, "peta")
         hal.wait_for_timeout(1500)  # beri waktu tile dan poligon stabil
-        hal.screenshot(path=os.path.join(KELUAR, "04-peta-hara.png"))
-        catat("peta hara SAFRONS termuat (191 area)", "OK")
+        catat("peta hara SAFRONS termuat (191 area), mode gambar bawaan", "OK")
 
-        # verifikasi ketepatan: klik titik peta (lat -6,6 lon 106,8) yang diketahui
-        # berada di area "Bogor" menurut uji titik-dalam-poligon
+        # ==== MODE GAMBAR: petak ~0,5 ha dekat titik (-6,5995, 106,8002) ====
+        hal.evaluate("window.__ppPeta.setView([-6.59955, 106.80023], 16)")
+        hal.wait_for_timeout(600)
+        daftar_titik = hal.evaluate(
+            "(() => { const cand = [[-6.6, 106.8], [-6.5991, 106.8], [-6.5991, 106.80046], [-6.6, 106.80046]];"
+            " const r = document.querySelector('#peta-leaflet').getBoundingClientRect();"
+            " return cand.map(ll => { const cp = window.__ppPeta.latLngToContainerPoint(ll);"
+            " return { x: r.left + cp.x, y: r.top + cp.y }; }); })()"
+        )
+        for t in daftar_titik:
+            hal.mouse.click(t["x"], t["y"])
+        info = hal.inner_text("#info-gambar")
+        assert "Luas gambaran" in info and "ha" in info, info
+        hal.screenshot(path=os.path.join(KELUAR, "04-peta-hara.png"))
+        catat("petak digambar 4 titik, luas terukur otomatis: " + info, "OK")
+
+        hal.click("#selesai-gambar")
+        hal.wait_for_selector("#area-pakai", timeout=8000)
+        kartu = hal.inner_text("#peta-detail")
+        assert "Luas terukur" in kartu and "unit peta SAFRONS" in kartu, kartu[:150]
+        hal.fill("#area-nama", "Sawah Gambar Uji")
+        hal.screenshot(path=os.path.join(KELUAR, "05-peta-hara-detail.png"))
+        hal.click("#area-pakai")
+        hal.wait_for_selector("#v-lahan:not([hidden])")
+        assert "Sawah Gambar Uji" in hal.inner_text("#daftar-lahan")
+        assert "dari gambar peta" in hal.inner_text("#daftar-lahan")
+        catat("lahan tersimpan sesuai gambaran (luas dari geometri)", "OK")
+
+        # ==== MODE PILIH UNIT: klik koordinat yang diketahui di area Bogor ====
+        hal.click(".baris-judul .tombol.kecil")
+        hal.wait_for_selector("#v-tambah-lahan:not([hidden])")
+        hal.click(".pilihan-sumber[data-buka='peta']")
+        hal.wait_for_selector("#peta-leaflet .leaflet-overlay-pane path:not([d='M0 0'])", timeout=20000)
+        hal.click("#mode-peta .segmen[data-mode='unit']")
+        hal.wait_for_timeout(400)
         titik = hal.evaluate(
             "(() => { const cp = window.__ppPeta.latLngToContainerPoint([-6.6, 106.8]);"
             " const r = document.querySelector('#peta-leaflet').getBoundingClientRect();"
@@ -92,27 +124,12 @@ def jalankan():
         )
         hal.mouse.click(titik["x"], titik["y"])
         hal.wait_for_selector("#area-pakai", timeout=8000)
-        assert "AREA BOGOR" in hal.inner_text("#peta-detail").upper(), hal.inner_text("#peta-detail")[:120]
-        catat("klik titik peta memilih area yang tepat (Bogor)", "OK")
+        assert "UNIT LAHAN SAFRONS" in hal.inner_text("#peta-detail").upper(), hal.inner_text("#peta-detail")[:120]
+        catat("mode unit: klik koordinat (-6,6, 106,8) memilih unit yang tepat", "OK")
         hal.click(".tombol-kembali[data-buka='tambah-lahan']")
-        hal.click(".pilihan-sumber[data-buka='peta']")
-        hal.wait_for_selector("#peta-leaflet .leaflet-overlay-pane path:not([d='M0 0'])", timeout=20000)
-        hal.wait_for_timeout(600)
-
-        # ketuk poligon area berisi data yang benar-benar terlihat di peta
-        hal.click("#peta-leaflet .leaflet-overlay-pane path:not([d='M0 0']):not([fill='#CDD4CC']) >> nth=0")
-        hal.wait_for_selector("#area-pakai", timeout=8000)
-        assert "AREA" in hal.inner_text("#peta-detail").upper()
-        hal.fill("#area-nama", "Sawah Peta Uji")
-        hal.screenshot(path=os.path.join(KELUAR, "05-peta-hara-detail.png"))
-        hal.click("#area-pakai")
-        hal.wait_for_selector("#v-lahan:not([hidden])")
-        assert "Sawah Peta Uji" in hal.inner_text("#daftar-lahan")
-        catat("lahan dari peta hara SAFRONS terdaftar", "OK")
 
         # tambah lahan kedua via uji tanah: pH 5.4, P sangat rendah (masuk sebaran)
-        hal.click(".baris-judul .tombol.kecil")
-        hal.wait_for_selector("#v-tambah-lahan:not([hidden])")
+        # (sudah berada di layar tambah-lahan setelah uji mode unit)
         hal.click(".pilihan-sumber[data-buka='uji-tanah']")
         hal.wait_for_selector("#form-uji-tanah")
         # uji dulu validasi input buruk

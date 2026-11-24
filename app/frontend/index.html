@@ -116,13 +116,23 @@
         <svg viewBox="0 0 24 24" class="ikon" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <h1 class="judul-layar">Peta Hara Wilayah</h1>
-      <p class="subjudul-layar">Ketuk area di peta untuk melihat kondisi haranya. Data 191 area SAFRONS.</p>
+      <p class="subjudul-layar">Gambar batas petak Anda di peta agar luas dan bentuknya persis, atau pilih unit lahan SAFRONS.</p>
+      <div class="tersegmentasi" id="mode-peta" role="radiogroup" aria-label="Cara memilih lahan">
+        <button type="button" class="segmen aktif" data-mode="gambar" aria-pressed="true">Gambar Lahan</button>
+        <button type="button" class="segmen" data-mode="unit" aria-pressed="false">Pilih Unit</button>
+      </div>
+      <div class="baris-alat" id="alat-gambar">
+        <span id="info-gambar" class="teks-abu">Ketuk peta untuk menandai sudut pertama lahan Anda.</span>
+        <button class="tombol kecil garis" id="urungkan-titik">Urungkan</button>
+        <button class="tombol kecil garis" id="bersihkan-titik">Bersihkan</button>
+        <button class="tombol kecil utama" id="selesai-gambar" disabled>Selesai</button>
+      </div>
       <div class="peta-wadah">
         <div id="peta-leaflet" class="peta-leaflet" role="application" aria-label="Peta hara wilayah Bogor"></div>
         <p class="keadaan-muat" id="peta-muat">Memuat peta…</p>
         <p class="keadaan-galat" id="peta-galat" hidden>Peta gagal dimuat. <button class="tautan" id="peta-coba-lagi">Coba lagi</button></p>
       </div>
-      <div id="peta-detail" class="kartu" hidden><!-- detail area terpilih --></div>
+      <div id="peta-detail" class="kartu" hidden><!-- detail area atau petak terpilih --></div>
     </section>
 
     <!-- ============ FORM UJI TANAH ============ -->

@@ -8,7 +8,7 @@ PupukPintar adalah proyek akhir mata kuliah Perancangan Produk Kecerdasan Buatan
 |---|---|
 | Kelompok | 14 |
 | Anggota | Irgi Setiawan (M0405241018), Syarif Abdullah Assagaf (M0405241033), Thogianna Anggitouli Metanoia Sinaga (M0405241077) |
-| Fitur inti | Rekomendasi dosis NPK berbasis Random Forest dengan tingkat keyakinan, guardrail rentang aman, dan peta 191 area SAFRONS |
+| Fitur inti | Rekomendasi dosis NPK berbasis Random Forest dengan tingkat keyakinan, guardrail rentang aman, dan peta dengan alat gambar petak (luas terukur otomatis) di atas 191 area SAFRONS |
 | Data latih | 6.000 baris proxy hasil ekstraksi logika tabel rekomendasi resmi |
 | Kinerja model | Agreement 94,7 persen (uji silang 5-fold), 95,2 persen pada holdout 20 persen, latensi rata-rata 55 ms |
 
@@ -91,7 +91,7 @@ Guardrail: seluruh dosis dikunci pada rentang aman Permentan (padi N 150 sampai 
 ## Batasan yang perlu diketahui
 
 - Data latih adalah proxy hasil ekstraksi logika tabel resmi, bukan hasil uji tanah laboratorium. Validasi lapangan bersama poktan masih direncanakan.
-- Peta wilayah memakai data spasial asli SAFRONS (191 area, audit LKP-P1). pH memakai nilai rata-rata area, sedangkan band N-P-K peta dikonversi ke nilai perwakilan skala model (skrip app/frontend/data/gen_peta.py).
+- Peta wilayah memakai data spasial asli SAFRONS (191 area, audit LKP-P1). Petani dapat menggambar batas petaknya sendiri dan luas dihitung otomatis dari geometri (rumus Chamberlain-Duquette), nilai hara diambil dari unit SAFRONS tempat pusat petak berada. pH peta memakai nilai rata-rata area, band N-P-K dikonversi ke nilai perwakilan skala model (skrip app/frontend/data/gen_peta.py).
 - Auth, penyimpanan server, dan panel penyuluh pada versi demo ini berjalan lokal di perangkat (localStorage).
 
 ## Lisensi

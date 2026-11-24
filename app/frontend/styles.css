@@ -229,6 +229,15 @@ html, body {
   z-index: 1;
 }
 .leaflet-container { font: inherit; }
+.peta-leaflet.mode-gambar .leaflet-interactive { pointer-events: none; }
+.baris-alat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.baris-alat .tombol { min-height: 40px; padding: 8px 12px; font-size: 13.5px; }
+.baris-alat #info-gambar { flex: 1 1 100%; font-size: 13px; }
 #peta-svg { width: 100%; height: auto; display: block; }
 .peta-latar { fill: #EDF2EA; }
 .peta-kisi { stroke: #D8E0D4; stroke-width: 1; }

@@ -287,7 +287,7 @@ def slide3():
     x_list = [0.55, 3.72, 6.89, 10.06]
     w = 2.72
     isi_kartu = [
-        ("INPUT", "Kondisi lahan: pH, N, P, K,\ntekstur, komoditas, target\nhasil, luas, musim\n(peta hara SAFRONS atau uji tanah)"),
+        ("INPUT", "Kondisi lahan: pH, N, P, K,\ntekstur, komoditas, target\nhasil, luas, musim\n(gambar petak di peta atau uji tanah)"),
         ("INTELLIGENCE", "Random Forest Regressor\n300 pohon + keyakinan\nantarpohon + guardrail rentang\nPermentan + aturan Balittanah"),
         ("UX", "Kartu dosis kg/ha dan kg\nper petak, badge keyakinan,\nestimasi biaya, paket modal,\npenjelasan sederhana"),
         ("VALUE", "Dosis tepat per lahan,\npotensi hemat biaya pupuk,\nkeputusan aman lewat\nverifikasi penyuluh"),
@@ -336,7 +336,7 @@ def slide4():
     bing.shadow.inherit = False
 
     langkah = [
-        ("1", "Pengguna melakukan", "Pilih lahan di peta hara 191 area SAFRONS atau masukkan hasil uji tanah, lalu pilih komoditas dan target hasil"),
+        ("1", "Pengguna melakukan", "Gambar batas petak di peta (luas terukur otomatis) atau masukkan hasil uji tanah, lalu pilih komoditas dan target hasil"),
         ("2", "AI memproses", "Random Forest memprediksi dosis N-P-K, menghitung keyakinan dari sebaran antarpohon, guardrail mengunci rentang aman (p95 API 87 ms)"),
         ("3", "Pengguna menerima", "Dosis kg/ha dan kg per petak, estimasi biaya, tiga paket modal, keyakinan 81%, penjelasan, dan disclaimer"),
     ]
@@ -375,7 +375,7 @@ def slide5():
     pil(s, x + 0.14, 2.6, 1.35, 0.4, "HIJAU", latar=RGBColor(0xE4, 0xEE, 0xE6), warna_teks=NAVY, ukuran=10)
     w_img = tambah_tangkapan(s, "15-hasil-jagung.png", x + 1.62, 2.62, 2.55)
     kotak_teks(s, x + 0.14, 5.3, w - 0.28, 0.7,
-               "Pesan: Keyakinan 91% (Yakin), kartu dosis plus sub-label rentang aman resmi\n"
+               "Pesan: Keyakinan 95% (Yakin), kartu dosis plus sub-label rentang aman resmi\n"
                "Aksi: tetap disertai disclaimer dan tombol verifikasi penyuluh",
                ukuran=10, warna=ABU, baris=1.18)
 
