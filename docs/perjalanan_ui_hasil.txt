@@ -3,8 +3,8 @@
 [OK] beranda keadaan kosong 
 [OK] lahan keadaan kosong 
 [OK] layar pilih sumber lahan 
-[OK] peta hara SAFRONS termuat (191 area), mode gambar bawaan 
-[OK] petak digambar 4 titik, luas terukur otomatis: Sudut: 4 · Luas gambaran: 0,5 ha 
+[OK] peta vektor 191 area SAFRONS termuat (mode gambar bawaan) 
+[OK] petak digambar 4 titik, luas terukur otomatis: Sudut: 4 · Luas gambaran: 0,52 ha 
 [OK] lahan tersimpan sesuai gambaran (luas dari geometri) 
 [OK] mode unit: klik koordinat (-6,6, 106,8) memilih unit yang tepat 
 [OK] form uji tanah menolak pH 9,4 
@@ -25,8 +25,8 @@ OK galat consent tanpa centang
 OK beranda keadaan kosong 
 OK lahan keadaan kosong 
 OK layar pilih sumber lahan 
-OK peta hara SAFRONS termuat (191 area), mode gambar bawaan 
-OK petak digambar 4 titik, luas terukur otomatis: Sudut: 4 · Luas gambaran: 0,5 ha 
+OK peta vektor 191 area SAFRONS termuat (mode gambar bawaan) 
+OK petak digambar 4 titik, luas terukur otomatis: Sudut: 4 · Luas gambaran: 0,52 ha 
 OK lahan tersimpan sesuai gambaran (luas dari geometri) 
 OK mode unit: klik koordinat (-6,6, 106,8) memilih unit yang tepat 
 OK form uji tanah menolak pH 9,4 

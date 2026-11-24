@@ -77,19 +77,17 @@ def jalankan():
         hal.screenshot(path=os.path.join(KELUAR, "03-tambah-lahan.png"))
 
         hal.click(".pilihan-sumber[data-buka='peta']")
-        hal.wait_for_selector("#peta-leaflet .leaflet-overlay-pane path:not([d='M0 0'])", timeout=20000)
+        hal.wait_for_selector("#peta-svg .peta-area", timeout=20000)
         cek_luapan(hal, "peta")
-        hal.wait_for_timeout(1500)  # beri waktu tile dan poligon stabil
-        catat("peta hara SAFRONS termuat (191 area), mode gambar bawaan", "OK")
+        hal.wait_for_timeout(300)
+        catat("peta vektor 191 area SAFRONS termuat (mode gambar bawaan)", "OK")
 
         # ==== MODE GAMBAR: petak ~0,5 ha dekat titik (-6,5995, 106,8002) ====
-        hal.evaluate("window.__ppPeta.setView([-6.59955, 106.80023], 16)")
-        hal.wait_for_timeout(600)
+        hal.evaluate("window.__ppPeta.aturView(-6.59955, 106.80023, 0.012)")
+        hal.wait_for_timeout(300)
         daftar_titik = hal.evaluate(
             "(() => { const cand = [[-6.6, 106.8], [-6.5991, 106.8], [-6.5991, 106.80046], [-6.6, 106.80046]];"
-            " const r = document.querySelector('#peta-leaflet').getBoundingClientRect();"
-            " return cand.map(ll => { const cp = window.__ppPeta.latLngToContainerPoint(ll);"
-            " return { x: r.left + cp.x, y: r.top + cp.y }; }); })()"
+            " return cand.map(ll => window.__ppPeta.latlngKeKlien(ll[0], ll[1])); })()"
         )
         for t in daftar_titik:
             hal.mouse.click(t["x"], t["y"])
@@ -114,22 +112,17 @@ def jalankan():
         hal.click(".baris-judul .tombol.kecil")
         hal.wait_for_selector("#v-tambah-lahan:not([hidden])")
         hal.click(".pilihan-sumber[data-buka='peta']")
-        hal.wait_for_selector("#peta-leaflet .leaflet-overlay-pane path:not([d='M0 0'])", timeout=20000)
+        hal.wait_for_selector("#peta-svg .peta-area", timeout=20000)
         hal.click("#mode-peta .segmen[data-mode='unit']")
-        hal.wait_for_timeout(400)
-        titik = hal.evaluate(
-            "(() => { const cp = window.__ppPeta.latLngToContainerPoint([-6.6, 106.8]);"
-            " const r = document.querySelector('#peta-leaflet').getBoundingClientRect();"
-            " return { x: r.left + cp.x, y: r.top + cp.y }; })()"
-        )
+        hal.wait_for_timeout(300)
+        titik = hal.evaluate("window.__ppPeta.latlngKeKlien(-6.6, 106.8)")
         hal.mouse.click(titik["x"], titik["y"])
         hal.wait_for_selector("#area-pakai", timeout=8000)
         assert "UNIT LAHAN SAFRONS" in hal.inner_text("#peta-detail").upper(), hal.inner_text("#peta-detail")[:120]
         catat("mode unit: klik koordinat (-6,6, 106,8) memilih unit yang tepat", "OK")
         hal.click(".tombol-kembali[data-buka='tambah-lahan']")
 
-        # tambah lahan kedua via uji tanah: pH 5.4, P sangat rendah (masuk sebaran)
-        # (sudah berada di layar tambah-lahan setelah uji mode unit)
+        # ==== LANJUT: lahan kedua via uji tanah ====
         hal.click(".pilihan-sumber[data-buka='uji-tanah']")
         hal.wait_for_selector("#form-uji-tanah")
         # uji dulu validasi input buruk

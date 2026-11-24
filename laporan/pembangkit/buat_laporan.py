@@ -634,7 +634,7 @@ def bab5():
     h2("5.4 Tabel penelusuran fitur")
     tabel("Tabel 5.4 Penelusuran fitur ke desain, komponen teknis, dan skenario uji", ["ID fitur", "Layar (Bab 6)", "Komponen teknis (Bab 7)", "Skenario uji (Bab 8)"], [
         ["F-01", "Splash dan onboarding", "Halaman splash dengan kotak centang consent, state localStorage", "S-01"],
-        ["F-02", "Lahan Saya, tambah lahan, peta hara, uji tanah", "GET /api/peta, peta Leaflet dengan alat gambar petak (luas geodesik otomatis), pilih unit SAFRONS, formulir uji tanah dengan validasi", "S-02, S-03"],
+        ["F-02", "Lahan Saya, tambah lahan, peta hara, uji tanah", "GET /api/peta, kanvas peta vektor SVG mandiri dengan alat gambar petak (luas geodesik otomatis) dan pilih unit SAFRONS, formulir uji tanah dengan validasi", "S-02, S-03"],
         ["F-03", "Rekomendasi (formulir dan hasil)", "POST /rekomendasi, mesin model.py, guardrail konstanta.py", "S-04, S-05"],
         ["F-04", "Hasil (kebutuhan, biaya, paket)", "Konversi kadar unsur Urea 46 persen, SP-36 30 persen, KCl 60 persen, harga di konstanta.py", "S-04"],
         ["F-05", "Hasil (penjelasan sederhana)", "Templat penjelasan dari status hara di model.py", "S-04"],
@@ -687,7 +687,7 @@ def bab6():
     gambar(os.path.join(LAYAR, "01-splash.png"), "Gambar 6.5 Layar entry point terbangun", 6.4)
     gambar(os.path.join(LAYAR, "08-form-rekomendasi.png"), "Gambar 6.6 Layar formulir rekomendasi terbangun", 6.4)
     gambar(os.path.join(LAYAR, "09-hasil-rekomendasi.png"), "Gambar 6.7 Layar hasil rekomendasi terbangun (padi, target 6 t/ha, luas 0,5 ha, keyakinan 81 persen)", 6.4)
-    gambar(os.path.join(LAYAR, "04-peta-hara.png"), "Gambar 6.8 Menggambar petak di atas peta 191 area SAFRONS (Leaflet, basemap OpenStreetMap), luas terukur otomatis dari geometri", 6.4)
+    gambar(os.path.join(LAYAR, "04-peta-hara.png"), "Gambar 6.8 Menggambar petak pada peta vektor 191 area SAFRONS, luas terukur otomatis dari geometri gambaran", 6.4)
 
     h2("6.3 Tipe antarmuka dan tingkat otomasi")
     tabel(None, ["Pilihan", "Isi dan alasan"], [
@@ -813,7 +813,7 @@ def bab8():
     ], lebar=[2.6, 4.2, 5.2, 4.0], ukuran=9.5)
     tabel("Tabel 8.2 Skenario uji", ["ID", "Skenario atau tugas", "Fitur (ID)", "Kriteria berhasil"], [
         ["S-01", "Masuk aplikasi tanpa mencentang persetujuan lalu dengan mencentang", "F-01", "Pesan galat tampil tanpa centang, masuk berhasil dengan centang"],
-        ["S-02", "Menggambar petak 4 titik di peta lalu menyimpannya, termasuk uji mode pilih unit dengan klik koordinat", "F-02", "Luas terukur otomatis 0,5 ha pada gambaran uji, lahan tersimpan berlabel dari gambar peta"],
+        ["S-02", "Menggambar petak 4 titik di peta lalu menyimpannya, termasuk uji mode pilih unit dengan klik koordinat", "F-02", "Luas terukur otomatis tampil pada gambaran uji (sekitar 0,5 ha), lahan tersimpan berlabel dari gambar peta"],
         ["S-03", "Mendaftar lahan dari uji tanah, termasuk percobaan pH 9,4", "F-02", "pH 9,4 ditolak dengan pesan, input wajar tersimpan"],
         ["S-04", "Menghitung rekomendasi padi pada lahan uji tanah, mengganti paket optimal, mengirim ke penyuluh, membuka riwayat", "F-03 sampai F-07", "Hasil tampil, paket mengubah biaya, riwayat terisi"],
         ["S-05", "Menghitung rekomendasi pada lahan dengan P 150 ppm (luar sebaran)", "F-03, F-06", "Angka disembunyikan, arahan uji lab tampil"],
@@ -857,20 +857,22 @@ def bab8():
         ["Keyakinan pita tengah tidak terkalibrasi baik", "Tabel 8.4, agreement terukur 42,9 persen pada kelompok Cukup yakin yang mengaku 0,83", "Kalibrasi diharapkan mendekati angka keyakinan", "Sedang", "Kategori sedang tetap diberi sub-label rentang dan anjuran cek ulang, kalibrasi ulang menunggu data lapangan, diamati lagi saat pilot"],
         ["Hampir semua kasus dalam sebaran masuk kelompok Yakin (98,8 persen)", "Tabel 8.4", "Diharapkan sebaran keyakinan lebih beragam", "Rendah", "Wajar untuk data proxy yang bersih, uji ulang pada data lapangan yang lebih bising"],
         ["Badge keyakinan terpotong pada layar sempit", "Uji perjalanan langkah hasil, tangkapan layar sebelum perbaikan", "Teks keluar kontainer pada 390 piksel", "Sedang", "Badge dipindah ke baris sendiri, uji ulang lulus tanpa luapan (iterasi di 8.5)"],
-        ["Peta grid awal berupa representasi buatan, bukan data asli", "Perbandingan peta versi awal dengan data sumber SAFRONS", "Input lahan tidak memakai peta sungguhan", "Rendah", "Diganti peta spasial asli 191 area SAFRONS (Leaflet) setelah data ditemukan di repositori audit"],
+        ["Peta grid awal berupa representasi buatan, bukan data asli", "Perbandingan peta versi awal dengan data sumber SAFRONS", "Input lahan tidak memakai peta sungguhan", "Rendah", "Diganti peta spasial asli 191 area SAFRONS setelah data ditemukan di repositori audit"],
         ["Konversi kebutuhan petak tidak bisa dihitung ulang dari angka tampilan", "Uji konsistensi konversi pytest gagal di versi awal", "Petani tidak bisa memeriksa 71 kg/ha kali 0,75 ha dibagi 0,30", "Sedang", "Dosis dibulatkan sejak awal sehingga semua turunan konsisten, uji lulus"],
-        ["Area terpilih pada peta kadang tidak sesuai poligon yang dituju pengguna", "Laporan pengguna saat mencoba peta, dikonfirmasi perbandingan titik klik dengan area terpilih", "Pengguna menekan poligon A tetapi kartu detail menunjukkan area lain", "Sedang", "Pemilihan area dihitung dari titik ketuk memakai uji titik-dalam-poligon, highlight dipindah ke lapisan non-interaktif, dan opsi tap Leaflet dihapus. Verifikasi otomatis: klik titik -6,6 106,8 kini selalu memilih area Bogor"],
+        ["Area terpilih pada peta kadang tidak sesuai poligon yang dituju pengguna", "Laporan pengguna saat mencoba peta, dikonfirmasi perbandingan titik klik dengan area terpilih", "Pengguna menekan poligon A tetapi kartu detail menunjukkan area lain", "Sedang", "Pemilihan area dihitung dari titik ketuk memakai uji titik-dalam-poligon, highlight dipindah ke lapisan non-interaktif, dan opsi tap peta dihapus. Verifikasi otomatis: klik titik -6,6 106,8 kini selalu memilih area Bogor"],
         ["Unit lanskap SAFRONS berukuran besar sehingga tidak mewakili petak petani", "Perbandingan bentuk unit lanskap dengan petak tipikal 0,25 sampai 2 hektar", "Bentuk dan luas lahan terpilih tidak sesuai lahan nyata pengguna", "Tinggi", "Alat gambar petak ditambahkan sebagai jalur utama F-02: petani melukis batasnya, luas dihitung geodesik dari geometri, nilai hara dari unit tempat pusat petak"],
+        ["Latar peta daring (tile OpenStreetMap) membuat tampilan peta tidak konsisten di sebagian peramban", "Tile gagal atau terlambat dimuat pada webview sehingga latar peta patah di balik poligon", "Peta terlihat rusak dan menambah dependensi jaringan pada demo", "Sedang", "Basemap daring dihapus bersama pustaka Leaflet, peta dibangun ulang sebagai kanvas vektor SVG mandiri yang bebas internet dan konsisten di semua peramban"],
     ], lebar=[4.0, 3.8, 3.6, 1.8, 4.0], ukuran=9)
 
     h2("8.5 Iterasi yang dilakukan")
     tabel("Tabel 8.7 Iterasi perbaikan beserta alasannya", ["Iterasi", "Perubahan", "Alasan (dari temuan)"], [
         ["1", "Badge keyakinan pindah ke baris tersendiri pada layar hasil", "Temuan terpotong pada 390 piksel"],
-        ["2", "Peta grid 12 zona diganti peta spasial asli 191 area SAFRONS (Leaflet, basemap OpenStreetMap)", "Data asli ditemukan di repositori audit sehingga representasi buatan tidak lagi diperlukan"],
+        ["2", "Peta grid 12 zona diganti peta spasial asli 191 area SAFRONS", "Data asli ditemukan di repositori audit sehingga representasi buatan tidak lagi diperlukan"],
         ["3", "Dosis dibulatkan ke kg/ha utuh sebelum konversi kebutuhan dan biaya", "Uji konsistensi konversi, agar petani bisa memeriksa ulang angka"],
         ["4", "Luas petak selalu terisi dari lahan terpilih", "Konsistensi nilai bawaan formulir"],
         ["5", "Pemilihan area peta berbasis titik ketuk dengan highlight non-interaktif", "Laporan ketidaksesuaian area terpilih pada peta"],
         ["6", "Alat gambar petak ditambahkan sebagai jalur utama pendaftaran lahan, luas terukur otomatis dari geometri", "Unit lanskap SAFRONS berbentuk besar dan tidak mewakili petak individu"],
+        ["7", "Peta dibangun ulang sebagai kanvas vektor SVG mandiri tanpa Leaflet dan tanpa tile daring, lengkap dengan pan, zum, dan tooltip sendiri", "Latar daring membuat UI peta tidak konsisten dan rentan kegagalan jaringan"],
     ], lebar=[1.4, 7.0, 7.6], ukuran=9.5)
 
     h2("8.6 Status akhir MVQ")

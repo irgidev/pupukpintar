@@ -241,18 +241,30 @@ $("#daftar-lahan").addEventListener("click", (e) => {
   }
 });
 
-/* ---------- peta hara SAFRONS (Leaflet), dua mode: gambar petak / pilih unit ---------- */
-let petaL = null;          // objek L.map
-let lapisanArea = null;    // L.geoJSON unit SAFRONS
-let dataPeta = null;       // fitur peta untuk uji titik-dalam-poligon
-let lapisanSorot = null;   // highlight unit terpilih (non-interaktif)
+/* ---------- peta hara SAFRONS: kanvas vektor mandiri (tanpa tile daring) ---------- */
+let petaData = null;       // fitur geojson
+let svgPeta = null;        // elemen svg
+let proyeksiInfo = null;   // batas proyeksi untuk konversi tampilan
+let view = { x: 0, y: 0, w: 1, h: 1 };   // viewBox saat ini (satuan proyeksi)
+let viewDasar = { x: 0, y: 0, w: 1, h: 1 };
 let modePeta = "gambar";   // "gambar" | "unit"
 let titikGambar = [];      // [[lat,lng], ...] sudut petak yang digambar
-let grupGambar = null;     // LayerGroup visual gambaran
+let sorotIdx = null;       // indeks fitur unit yang disorot
+let seretJarak = 0;        // penanda apakah pointer sedang menyeret
+
+const COS_MID = Math.cos(6.71 * Math.PI / 180);
+
+function proyeksikan(lat, lng) {
+  return [lng * COS_MID, -lat];
+}
+
+function dariProyeksi(mx, my) {
+  return [-my, mx / COS_MID];
+}
 
 async function muatPeta() {
   $("#peta-galat").hidden = true;
-  if (petaL && lapisanArea) { return; }
+  if (petaData && svgPeta) { return; }
   $("#peta-muat").hidden = false;
   try {
     const r = await fetch("/api/peta");
@@ -275,48 +287,163 @@ function warnaArea(pH) {
 }
 
 function siapkanPeta(dataPetaSumber) {
-  const wadah = $("#peta-leaflet");
-  if (!petaL) {
-    petaL = L.map(wadah, { attributionControl: true, zoomControl: true });
-    petaL.setView([-6.55, 106.78], 10);
-    // basemap daring; bila luring, poligon tetap tampil di atas latar peta polos
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-      attribution: "&copy; OpenStreetMap",
-    }).addTo(petaL);
-    grupGambar = L.layerGroup().addTo(petaL);
-  }
-  setTimeout(() => petaL.invalidateSize(), 60);
+  petaData = dataPetaSumber;
+  svgPeta = $("#peta-svg");
 
-  lapisanArea = L.geoJSON(dataPetaSumber, {
-    style: (fitur) => {
-      const p = fitur.properties;
-      if (p.nodata) return { color: "#9AA39C", weight: 1, fillOpacity: 0.25, fillColor: "#CDD4CC", dashArray: "3 3" };
-      return { color: "#FFFFFF", weight: 1.2, fillOpacity: 0.5, fillColor: warnaArea(p.pH) };
-    },
-    onEachFeature: (fitur, layer) => {
-      const p = fitur.properties;
-      layer.bindTooltip(p.nodata ? p.nama + " (tanpa data)" : p.nama, { sticky: true, direction: "top" });
-      layer.on("click", (ev) => {
-        if (modePeta === "gambar") return; // dalam mode gambar, klik ditangani peta
-        if (p.nodata) {
-          toast("Area \"" + p.nama + "\" tidak punya data hara sehingga tidak bisa dipilih.", true);
-          return;
+  // proyeksi ekuirektangular: mx = lon * cos(mid), my = -lat (utara di atas)
+  let mxMin = Infinity, mxMaks = -Infinity, myMin = Infinity, myMaks = -Infinity;
+  for (const fitur of petaData.features) {
+    const polys = fitur.geometry.type === "MultiPolygon" ? fitur.geometry.coordinates : [fitur.geometry.coordinates];
+    for (const poly of polys) {
+      for (const ring of poly) {
+        for (const t of ring) {
+          const mx = t[0] * COS_MID, my = -t[1];
+          if (mx < mxMin) mxMin = mx;
+          if (mx > mxMaks) mxMaks = mx;
+          if (my < myMin) myMin = my;
+          if (my > myMaks) myMaks = my;
         }
-        const terpilih = cariAreaPadaTitik(ev.latlng.lat, ev.latlng.lng) || p;
-        pilihArea(terpilih);
-      });
-    },
-  }).addTo(petaL);
-  petaL.fitBounds(lapisanArea.getBounds(), { padding: [10, 10] });
-  dataPeta = dataPetaSumber;
-  window.__ppPeta = petaL; // hook pengujian: klik koordinat peta yang diketahui
-  petaL.on("click", (ev) => {
-    if (modePeta === "gambar") { tambahTitik(ev.latlng); return; }
-    const terpilih = cariAreaPadaTitik(ev.latlng.lat, ev.latlng.lng);
+      }
+    }
+  }
+  const r = svgPeta.getBoundingClientRect();
+  const aspek = r.height / r.width;
+  const wEkstensi = mxMaks - mxMin;
+  const hEkstensi = myMaks - myMin;
+  const w0 = Math.max(wEkstensi, hEkstensi / aspek) * 1.04;
+  const pusatMx = (mxMin + mxMaks) / 2;
+  const pusatMy = (myMin + myMaks) / 2;
+  view = { x: pusatMx - w0 / 2, y: pusatMy - (w0 * aspek) / 2, w: w0, h: w0 * aspek };
+  viewDasar = { ...view };
+
+  // bangun jalur poligon sekali saja, koordinat dalam satuan proyeksi
+  let isi = '<g id="peta-poligon">';
+  petaData.features.forEach((fitur, idx) => {
+    const p = fitur.properties;
+    const polys = fitur.geometry.type === "MultiPolygon" ? fitur.geometry.coordinates : [fitur.geometry.coordinates];
+    let d = "";
+    for (const poly of polys) {
+      for (const ring of poly) {
+        d += "M" + ring.map(t => (t[0] * COS_MID).toFixed(4) + " " + (-t[1]).toFixed(4)).join("L") + "Z";
+      }
+    }
+    const kelas = p.nodata ? "peta-area peta-kosong" : "peta-area";
+    const isi_tooltip = p.nodata ? p.nama + " (tanpa data)" : p.nama;
+    isi += `<path class="${kelas}" data-idx="${idx}" data-nama="${isi_tooltip.replace(/"/g, "&quot;")}" d="${d}" fill="${p.nodata ? "#CDD4CC" : warnaArea(p.pH)}" ${p.nodata ? 'stroke-dasharray="3 3"' : ""}/>`;
+  });
+  isi += "</g>" + '<g id="peta-dinamis"></g>';
+  svgPeta.innerHTML = isi;
+  terapkanViewBox();
+  pasangInteraksiPeta();
+  terapkanMode();
+  window.__ppPeta = {
+    latlngKeKlien: (lat, lng) => latlngKeKlien(lat, lng),
+    aturView: (lat, lng, tinggi) => aturView(lat, lng, tinggi),
+  };
+}
+
+function terapkanViewBox() {
+  svgPeta.setAttribute("viewBox", `${view.x} ${view.y} ${view.w} ${view.h}`);
+  segarkanDinamis();
+}
+
+function latlngKeKlien(lat, lng) {
+  const [mx, my] = proyeksikan(lat, lng);
+  const r = svgPeta.getBoundingClientRect();
+  return {
+    x: r.left + ((mx - view.x) / view.w) * r.width,
+    y: r.top + ((my - view.y) / view.h) * r.height,
+  };
+}
+
+function klienKeLatlng(klienX, klienY) {
+  const r = svgPeta.getBoundingClientRect();
+  const mx = view.x + ((klienX - r.left) / r.width) * view.w;
+  const my = view.y + ((klienY - r.top) / r.height) * view.h;
+  return dariProyeksi(mx, my);
+}
+
+function aturView(lat, lng, tinggi) {
+  const aspek = view.h / view.w;
+  const [mx, my] = proyeksikan(lat, lng);
+  view = { x: mx - view.w / 2, y: my - (view.w * aspek) / 2, w: view.w, h: view.w * aspek };
+  view.h = tinggi;
+  view.w = tinggi / aspek;
+  view.x = mx - view.w / 2;
+  view.y = my - view.h / 2;
+  terapkanViewBox();
+}
+
+function zum(faktor, fokusX = null, fokusY = null) {
+  const baru = Math.min(2.2, Math.max(0.02, view.h * faktor));
+  const nyata = baru / view.h;
+  const r = svgPeta.getBoundingClientRect();
+  const fx = fokusX === null ? r.width / 2 : Math.max(0, Math.min(r.width, fokusX));
+  const fy = fokusY === null ? r.height / 2 : Math.max(0, Math.min(r.height, fokusY));
+  const mxFokus = view.x + (fx / r.width) * view.w;
+  const myFokus = view.y + (fy / r.height) * view.h;
+  view.w *= nyata;
+  view.h = baru;
+  view.x = mxFokus - (fx / r.width) * view.w;
+  view.y = myFokus - (fy / r.height) * view.h;
+  terapkanViewBox();
+}
+
+function pasangInteraksiPeta() {
+  svgPeta.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const r = svgPeta.getBoundingClientRect();
+    zum(e.deltaY > 0 ? 1.25 : 0.8, e.clientX - r.left, e.clientY - r.top);
+  }, { passive: false });
+
+  svgPeta.addEventListener("pointerdown", (e) => {
+    svgPeta.setPointerCapture(e.pointerId);
+    seretJarak = 0;
+    svgPeta._seretDari = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y };
+  });
+  svgPeta.addEventListener("pointerup", () => {
+    svgPeta._seretDari = null;
+  });
+
+  // seret untuk menggeser peta; ketukan pendek diteruskan sebagai klik
+  svgPeta.addEventListener("pointermove.seret", (e) => {
+    if (!svgPeta._seretDari) return;
+    const r = svgPeta.getBoundingClientRect();
+    const dx = e.clientX - svgPeta._seretDari.x;
+    const dy = e.clientY - svgPeta._seretDari.y;
+    seretJarak = Math.abs(dx) + Math.abs(dy);
+    if (seretJarak > 4) {
+      view.x = svgPeta._seretDari.vx - (dx / r.width) * view.w;
+      view.y = svgPeta._seretDari.vy - (dy / r.height) * view.h;
+      terapkanViewBox();
+    }
+  });
+
+  svgPeta.addEventListener("click", (e) => {
+    if (seretJarak > 4) return; // itu seretan, bukan ketukan
+    const r = svgPeta.getBoundingClientRect();
+    const [lat, lng] = klienKeLatlng(e.clientX, e.clientY);
+    if (modePeta === "gambar") { tambahTitik({ lat, lng }); return; }
+    const terpilih = cariAreaPadaTitik(lat, lng);
     if (terpilih) pilihArea(terpilih);
   });
-  terapkanMode();
+
+  // tooltip nama area mengikuti kursor
+  svgPeta.addEventListener("pointermove", (e) => {
+    const jalur = e.target.closest(".peta-area");
+    const tip = $("#peta-tooltip");
+    if (!jalur || modePeta === "gambar") { tip.hidden = true; return; }
+    const wadah = svgPeta.parentElement.getBoundingClientRect();
+    tip.textContent = jalur.dataset.nama;
+    tip.style.left = (e.clientX - wadah.left + 12) + "px";
+    tip.style.top = (e.clientY - wadah.top + 12) + "px";
+    tip.hidden = false;
+  });
+  svgPeta.addEventListener("pointerleave", () => { $("#peta-tooltip").hidden = true; });
+
+  $("#zum-masuk").addEventListener("click", () => zum(0.7));
+  $("#zum-keluar").addEventListener("click", () => zum(1.4));
+  $("#peta-reset").addEventListener("click", () => { view = { ...viewDasar }; terapkanViewBox(); });
 }
 
 /* ---------- pemilihan unit dari titik ketuk ---------- */
@@ -338,10 +465,10 @@ function luasRing(ring) {
 }
 
 function cariAreaPadaTitik(lat, lng) {
-  if (!dataPeta) return null;
+  if (!petaData) return null;
   let terbaik = null;
   let luasTerbaik = Infinity;
-  for (const fitur of dataPeta.features) {
+  for (const fitur of petaData.features) {
     const p = fitur.properties;
     if (p.nodata) continue;
     const polys = fitur.geometry.type === "MultiPolygon" ? fitur.geometry.coordinates : [fitur.geometry.coordinates];
@@ -361,10 +488,10 @@ function cariAreaPadaTitik(lat, lng) {
 }
 
 function unitTerdekat(lat, lng) {
-  if (!dataPeta) return null;
+  if (!petaData) return null;
   let terbaik = null;
   let jarakTerbaik = Infinity;
-  for (const fitur of dataPeta.features) {
+  for (const fitur of petaData.features) {
     const p = fitur.properties;
     if (p.nodata) continue;
     const polys = fitur.geometry.type === "MultiPolygon" ? fitur.geometry.coordinates : [fitur.geometry.coordinates];
@@ -380,8 +507,8 @@ function unitTerdekat(lat, lng) {
 
 /* ---------- mode ---------- */
 function terapkanMode() {
-  const wadah = $("#peta-leaflet");
-  wadah.classList.toggle("mode-gambar", modePeta === "gambar");
+  svgPeta.classList.toggle("mode-gambar", modePeta === "gambar");
+  svgPeta.classList.toggle("mode-unit", modePeta === "unit");
   $("#alat-gambar").hidden = modePeta !== "gambar";
   if (modePeta !== "gambar") bersihkanGambar(false);
   $$("#mode-peta .segmen").forEach(b => {
@@ -410,17 +537,39 @@ function luasGeodesikHa(ring) {
   return Math.abs(total * R * R / 2) / 10000;
 }
 
+function segarkanDinamis() {
+  const g = $("#peta-dinamis");
+  if (!g) return;
+  const r = svgPeta.getBoundingClientRect();
+  const rTitik = (view.w / Math.max(r.width, 1)) * 5; // 5 piksel dalam satuan proyeksi
+  let isi = "";
+  if (sorotIdx !== null && petaData.features[sorotIdx]) {
+    const fitur = petaData.features[sorotIdx];
+    const polys = fitur.geometry.type === "MultiPolygon" ? fitur.geometry.coordinates : [fitur.geometry.coordinates];
+    let d = "";
+    for (const poly of polys) {
+      for (const ring of poly) {
+        d += "M" + ring.map(t => (t[0] * COS_MID).toFixed(4) + " " + (-t[1]).toFixed(4)).join("L") + "Z";
+      }
+    }
+    isi += `<path d="${d}" fill="#143D2B" fill-opacity="0.18" stroke="#143D2B" stroke-width="3" vector-effect="non-scaling-stroke" pointer-events="none"/>`;
+  }
+  if (modePeta === "gambar" && titikGambar.length) {
+    const titikP = titikGambar.map(t => proyeksikan(t[0], t[1]));
+    isi += titikP.map((t, i) => `<circle cx="${t[0]}" cy="${t[1]}" r="${rTitik}" fill="#F2C14E" stroke="#143D2B" stroke-width="2" vector-effect="non-scaling-stroke" pointer-events="none"/>`).join("");
+    if (titikP.length >= 2) {
+      isi += `<polyline points="${titikP.map(t => t[0] + "," + t[1]).join(" ")}" fill="none" stroke="#143D2B" stroke-width="2" stroke-dasharray="5 5" vector-effect="non-scaling-stroke" pointer-events="none"/>`;
+    }
+    if (titikP.length >= 3) {
+      isi += `<polygon points="${titikP.map(t => t[0] + "," + t[1]).join(" ")}" fill="#F2C14E" fill-opacity="0.3" stroke="#143D2B" stroke-width="2" vector-effect="non-scaling-stroke" pointer-events="none"/>`;
+    }
+  }
+  g.innerHTML = isi;
+}
+
 function gambarUlang() {
-  grupGambar.clearLayers();
-  titikGambar.forEach(t => {
-    L.circleMarker(t, { radius: 5, color: "#143D2B", weight: 2, fillColor: "#F2C14E", fillOpacity: 1 }).addTo(grupGambar);
-  });
-  if (titikGambar.length >= 2) {
-    L.polyline(titikGambar, { color: "#143D2B", weight: 2, dashArray: "5 5" }).addTo(grupGambar);
-  }
-  if (titikGambar.length >= 3) {
-    L.polygon(titikGambar, { color: "#143D2B", weight: 2, fillColor: "#F2C14E", fillOpacity: 0.3 }).addTo(grupGambar);
-  }
+  segarkanDinamis();
+  perbaruiInfoGambar();
 }
 
 function perbaruiInfoGambar() {
@@ -437,16 +586,15 @@ function perbaruiInfoGambar() {
   tombolSelesai.disabled = false;
 }
 
-function tambahTitik(latlng) {
-  titikGambar.push([latlng.lat, latlng.lng]);
-  gambarUlang();
+function tambahTitik(koordinat) {
+  titikGambar.push([koordinat.lat, koordinat.lng]);
+  segarkanDinamis();
   perbaruiInfoGambar();
 }
 
 function bersihkanGambar(sisakanKartu = true) {
   titikGambar = [];
-  if (grupGambar) grupGambar.clearLayers();
-  perbaruiInfoGambar();
+  segarkanDinamis();
   if (!sisakanKartu) {
     const w = $("#peta-detail");
     w.hidden = true;
@@ -506,12 +654,8 @@ function pilihArea(p) {
     toast("Area \"" + p.nama + "\" tidak punya data hara sehingga tidak bisa dipilih.", true);
     return;
   }
-  const fiturSorot = dataPeta.features.find(f => f.properties.id === p.id);
-  if (lapisanSorot) petaL.removeLayer(lapisanSorot);
-  lapisanSorot = L.geoJSON(
-    { type: "Feature", properties: {}, geometry: fiturSorot.geometry },
-    { interactive: false, style: { color: "#143D2B", weight: 3, fillOpacity: 0.18, fillColor: "#143D2B" } }
-  ).addTo(petaL);
+  sorotIdx = petaData.features.findIndex(f => f.properties.id === p.id);
+  segarkanDinamis();
 
   const w = $("#peta-detail");
   w.hidden = false;
@@ -556,7 +700,7 @@ $("#mode-peta").addEventListener("click", (e) => {
 });
 $("#urungkan-titik").addEventListener("click", () => {
   titikGambar.pop();
-  gambarUlang();
+  segarkanDinamis();
   perbaruiInfoGambar();
 });
 $("#bersihkan-titik").addEventListener("click", () => bersihkanGambar(false));

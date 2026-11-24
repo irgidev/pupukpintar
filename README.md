@@ -91,7 +91,7 @@ Guardrail: seluruh dosis dikunci pada rentang aman Permentan (padi N 150 sampai 
 ## Batasan yang perlu diketahui
 
 - Data latih adalah proxy hasil ekstraksi logika tabel resmi, bukan hasil uji tanah laboratorium. Validasi lapangan bersama poktan masih direncanakan.
-- Peta wilayah memakai data spasial asli SAFRONS (191 area, audit LKP-P1). Petani dapat menggambar batas petaknya sendiri dan luas dihitung otomatis dari geometri (rumus Chamberlain-Duquette), nilai hara diambil dari unit SAFRONS tempat pusat petak berada. pH peta memakai nilai rata-rata area, band N-P-K dikonversi ke nilai perwakilan skala model (skrip app/frontend/data/gen_peta.py).
+- Peta wilayah memakai data spasial asli SAFRONS (191 area, audit LKP-P1). Petani dapat menggambar batas petaknya sendiri di kanvas vektor mandiri (tanpa tile daring, bekerja penuh luring) dan luas dihitung otomatis dari geometri (rumus Chamberlain-Duquette), nilai hara diambil dari unit SAFRONS tempat pusat petak berada. pH peta memakai nilai rata-rata area, band N-P-K dikonversi ke nilai perwakilan skala model (skrip app/frontend/data/gen_peta.py).
 - Auth, penyimpanan server, dan panel penyuluh pada versi demo ini berjalan lokal di perangkat (localStorage).
 
 ## Lisensi

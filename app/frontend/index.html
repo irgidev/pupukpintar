@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/leaflet.css">
 <link rel="stylesheet" href="styles.css">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 </head>
@@ -128,10 +127,17 @@
         <button class="tombol kecil utama" id="selesai-gambar" disabled>Selesai</button>
       </div>
       <div class="peta-wadah">
-        <div id="peta-leaflet" class="peta-leaflet" role="application" aria-label="Peta hara wilayah Bogor"></div>
-        <p class="keadaan-muat" id="peta-muat">Memuat peta…</p>
+        <svg id="peta-svg" class="peta-svg mode-gambar" role="application" aria-label="Peta hara wilayah Bogor"></svg>
+        <div class="peta-zum">
+          <button id="zum-masuk" aria-label="Perbesar peta">+</button>
+          <button id="zum-keluar" aria-label="Perkecil peta">&minus;</button>
+          <button id="peta-reset" aria-label="Pusatkan peta">&circlearrowleft;</button>
+        </div>
+        <div class="peta-tooltip" id="peta-tooltip" hidden></div>
+        <p class="keadaan-muat" id="peta-muat">Memuat peta&hellip;</p>
         <p class="keadaan-galat" id="peta-galat" hidden>Peta gagal dimuat. <button class="tautan" id="peta-coba-lagi">Coba lagi</button></p>
       </div>
+      <p class="catatan-kecil tengah">Kanvas vektor 191 area SAFRONS, bekerja penuh tanpa internet.</p>
       <div id="peta-detail" class="kartu" hidden><!-- detail area atau petak terpilih --></div>
     </section>
 
@@ -344,7 +350,6 @@
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 </div>
 
-<script src="assets/leaflet.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
