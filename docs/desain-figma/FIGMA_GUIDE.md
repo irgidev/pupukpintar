@@ -43,7 +43,7 @@ pelabel status).
 
 ## Perubahan dari wireframe low-fidelity (alasannya tertulis di Bab 6.2 laporan)
 
-1. Placeholder abu-abu diganti konten nyata: peta zona, chip lahan, kartu dosis berangka.
+1. Placeholder abu-abu diganti konten nyata: peta hara 191 area SAFRONS (Leaflet), chip lahan, kartu dosis berangka.
 2. Badge keyakinan bergerak dari sebelah judul ke baris tersendiri agar tidak terpotong pada layar 390 px (temuan uji perjalanan UI).
 3. Tiga kartu dosis diberi sub-label rentang aman resmi supaya angka selalu bisa dibandingkan pengguna.
 4. Peringatan dini berbentuk pita kuning dengan ikon segitiga, terpisah dari penjelasan sederhana.

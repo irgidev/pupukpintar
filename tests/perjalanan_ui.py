@@ -77,19 +77,22 @@ def jalankan():
         hal.screenshot(path=os.path.join(KELUAR, "03-tambah-lahan.png"))
 
         hal.click(".pilihan-sumber[data-buka='peta']")
-        hal.wait_for_selector("#peta-svg:not([hidden])", timeout=15000)
+        hal.wait_for_selector("#peta-leaflet .leaflet-overlay-pane path:not([d='M0 0'])", timeout=20000)
         cek_luapan(hal, "peta")
-        hal.screenshot(path=os.path.join(KELUAR, "04-peta-zona.png"))
-        catat("peta zona termuat", "OK")
+        hal.wait_for_timeout(1500)  # beri waktu tile dan poligon stabil
+        hal.screenshot(path=os.path.join(KELUAR, "04-peta-hara.png"))
+        catat("peta hara SAFRONS termuat (191 area)", "OK")
 
-        hal.click(".peta-zona-grup[data-zona='Z01']")
-        hal.wait_for_selector("#zona-pakai")
-        hal.fill("#zona-nama", "Sawah Cibinong")
-        hal.screenshot(path=os.path.join(KELUAR, "05-peta-zona-detail.png"))
-        hal.click("#zona-pakai")
+        # ketuk poligon area berisi data yang benar-benar terlihat di peta
+        hal.click("#peta-leaflet .leaflet-overlay-pane path:not([d='M0 0']):not([fill='#CDD4CC']) >> nth=0")
+        hal.wait_for_selector("#area-pakai", timeout=8000)
+        assert "AREA" in hal.inner_text("#peta-detail").upper()
+        hal.fill("#area-nama", "Sawah Peta Uji")
+        hal.screenshot(path=os.path.join(KELUAR, "05-peta-hara-detail.png"))
+        hal.click("#area-pakai")
         hal.wait_for_selector("#v-lahan:not([hidden])")
-        assert "Sawah Cibinong" in hal.inner_text("#daftar-lahan")
-        catat("lahan dari peta terdaftar", "OK")
+        assert "Sawah Peta Uji" in hal.inner_text("#daftar-lahan")
+        catat("lahan dari peta hara SAFRONS terdaftar", "OK")
 
         # tambah lahan kedua via uji tanah: pH 5.4, P sangat rendah (masuk sebaran)
         hal.click(".baris-judul .tombol.kecil")

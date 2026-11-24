@@ -151,13 +151,20 @@ def test_peringatan_ph_masam():
     assert any("apur" in p for p in h["peringatan"])
 
 
-def test_model_info_dan_zona():
+def test_model_info_dan_peta_safrons():
     status, m = panggil(None, "GET", "/model/info")
     assert status == 200
     assert m["cv"]["agreement_persen"] > 90
-    status2, z = panggil(None, "GET", "/api/zona")
+    status2, peta = panggil(None, "GET", "/api/peta")
     assert status2 == 200
-    assert len(z["zona"]) == 12
+    assert len(peta["features"]) == 191, "peta harus memuat 191 area SAFRONS"
+    berisi_data = [f for f in peta["features"] if not f["properties"].get("nodata")]
+    assert len(berisi_data) >= 180
+    contoh = berisi_data[0]["properties"]
+    for kunci in ("nama", "pH", "n_persen", "p_ppm", "k_me100g", "tekstur"):
+        assert kunci in contoh
+    assert contoh["tekstur"] in ("Lempung", "Lempung Liat", "Liat")
+    assert 3.0 <= contoh["pH"] <= 9.0
 
 
 def test_berkas_statista_dilayani():

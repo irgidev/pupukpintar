@@ -32,7 +32,6 @@ function bacaState() {
 function simpanState(s) { localStorage.setItem(KUNCI, JSON.stringify(s)); }
 
 let state = bacaState();
-let zonaData = null;
 let lahanTerpilih = null;
 let komoditasAktif = "Padi";
 let hasilAktif = null;
@@ -151,7 +150,7 @@ function renderBeranda() {
       <p class="label-kecil">LAHAN ANDA</p>
       <button class="keliling-lahan" data-buka="lahan" style="width:100%">
         <span class="nama-lahan">${l.nama}</span>
-        <span class="sumber-lahan">${l.sumber === "peta" ? "dari peta zona " + (l.zona || "") : "dari uji tanah"}</span>
+        <span class="sumber-lahan">${l.sumber === "peta" ? "dari peta hara SAFRONS: " + (l.zona || "") : "dari uji tanah"}</span>
         <div>${chipHara(l)}</div>
         <p class="ph-lahan">pH ${desimal(l.pH)} · luas ${desimal(l.luas_ha)} ha</p>
       </button>`;
@@ -207,7 +206,7 @@ function renderLahan() {
     <div class="baris-lahan" data-id="${l.id}">
       <button class="keliling-lahan" data-lihat="${l.id}">
         <span class="nama-lahan">${l.nama}</span>
-        <span class="sumber-lahan">${l.sumber === "peta" ? "dari peta zona " + (l.zona || "") : "dari uji tanah"}</span>
+        <span class="sumber-lahan">${l.sumber === "peta" ? "dari peta hara SAFRONS: " + (l.zona || "") : "dari uji tanah"}</span>
         <div>${chipHara(l)}</div>
         <p class="ph-lahan">pH ${desimal(l.pH)} · N ${desimal(l.n_persen, 2)} · P ${desimal(l.p_ppm)} ppm · K ${desimal(l.k_me100g, 2)} · ${l.tekstur} · luas ${desimal(l.luas_ha)} ha</p>
       </button>
@@ -236,17 +235,21 @@ $("#daftar-lahan").addEventListener("click", (e) => {
   }
 });
 
-/* ---------- peta zona ---------- */
+/* ---------- peta hara SAFRONS (Leaflet) ---------- */
+let petaL = null;          // objek L.map
+let lapisanArea = null;    // L.geoJSON
+let areaDipilih = null;    // layer yang sedang dipilih
+
 async function muatPeta() {
   $("#peta-galat").hidden = true;
-  if (zonaData) { gambarPeta(); return; }
+  if (petaL && lapisanArea) { return; }
   $("#peta-muat").hidden = false;
-  $("#peta-svg").hidden = true;
   try {
-    const r = await fetch("/api/zona");
+    const r = await fetch("/api/peta");
     if (!r.ok) throw new Error("gagal");
-    zonaData = await r.json();
-    gambarPeta();
+    const dataPeta = await r.json();
+    siapkanPeta(dataPeta);
+    $("#peta-muat").hidden = true;
   } catch (e) {
     $("#peta-muat").hidden = true;
     $("#peta-galat").hidden = false;
@@ -254,86 +257,83 @@ async function muatPeta() {
 }
 $("#peta-coba-lagi").addEventListener("click", muatPeta);
 
-function warnaZona(pH) {
-  if (pH < 5.5) return "#E9C46A"; // masam
-  if (pH < 6.5) return "#A8C8A0"; // agak masam sampai netral
-  return "#7FB58A"; // netral ke subur
+function warnaArea(pH) {
+  if (pH < 5.0) return "#E4B84C";  // masam
+  if (pH < 5.5) return "#E9CC7A";  // agak masam
+  if (pH < 6.0) return "#B9CF9E";  // setengah masam
+  return "#7FB58A";                // netral ke subur
 }
 
-function gambarPeta() {
-  $("#peta-muat").hidden = true;
-  const svg = $("#peta-svg");
-  // atribut hidden dihapus lewat removeAttribute karena svg bukan HTMLElement
-  svg.removeAttribute("hidden");
-  let isi = `<rect class="peta-latar" x="4" y="4" width="372" height="288" rx="10"/>`;
-  for (let x = 46; x < 372; x += 46) isi += `<line class="peta-kisi" x1="${x}" y1="8" x2="${x}" y2="288"/>`;
-  for (let y = 46; y < 288; y += 46) isi += `<line class="peta-kisi" x1="8" y1="${y}" x2="372" y2="${y}"/>`;
-
-  // susun zona per baris, lebar kotak mengikuti panjang nama, tanpa tumpang tindih
-  const zona = zonaData.zona;
-  const lebarZona = (z) => Math.max(72, z.nama.length * 6.2 + 14);
-  const JUMLAH_BARIS = 3;
-  const perBaris = Math.ceil(zona.length / JUMLAH_BARIS);
-  for (let baris = 0; baris < JUMLAH_BARIS; baris++) {
-    const anggota = zona.slice(baris * perBaris, (baris + 1) * perBaris);
-    const y = 42 + baris * 84;
-    let x = 8;
-    anggota.forEach(z => {
-      const lebar = lebarZona(z);
-      isi += `
-      <g class="peta-zona-grup" data-zona="${z.id}" tabindex="0" role="button" aria-label="Zona ${z.nama}">
-        <rect class="peta-zona" data-zona="${z.id}" x="${x}" y="${y}" width="${lebar}" height="52" rx="8" fill="${warnaZona(z.pH)}"/>
-        <text class="peta-label" x="${x + lebar / 2}" y="${y + 21}" text-anchor="middle">${z.nama}</text>
-        <text class="peta-label" x="${x + lebar / 2}" y="${y + 37}" text-anchor="middle" font-weight="400">pH ${desimal(z.pH)}</text>
-      </g>`;
-      x += lebar + 7;
-    });
+function siapkanPeta(dataPeta) {
+  const wadah = $("#peta-leaflet");
+  if (!petaL) {
+    petaL = L.map(wadah, { attributionControl: true, zoomControl: true, tap: true });
+    petaL.setView([-6.55, 106.78], 10);
+    // basemap daring; bila luring, poligon tetap tampil di atas latar peta polos
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: "&copy; OpenStreetMap",
+    }).addTo(petaL);
   }
-  svg.innerHTML = isi;
+  setTimeout(() => petaL.invalidateSize(), 60);
 
-  svg.querySelectorAll(".peta-zona-grup").forEach(g => {
-    const pilihZona = () => tampilkanZona(g.dataset.zona);
-    g.addEventListener("click", pilihZona);
-    g.addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); pilihZona(); } });
-  });
+  lapisanArea = L.geoJSON(dataPeta, {
+    style: (fitur) => {
+      const p = fitur.properties;
+      if (p.nodata) return { color: "#9AA39C", weight: 1, fillOpacity: 0.25, fillColor: "#CDD4CC", dashArray: "3 3" };
+      return { color: "#FFFFFF", weight: 1.2, fillOpacity: 0.78, fillColor: warnaArea(p.pH) };
+    },
+    onEachFeature: (fitur, layer) => {
+      const p = fitur.properties;
+      layer.bindTooltip(p.nodata ? p.nama + " (tanpa data)" : p.nama, { sticky: true, direction: "top" });
+      layer.on("click", () => pilihArea(p, layer));
+    },
+  }).addTo(petaL);
+  petaL.fitBounds(lapisanArea.getBounds(), { padding: [10, 10] });
 }
 
-function tampilkanZona(idZona) {
-  const z = zonaData.zona.find(t => t.id === idZona);
-  $$(".peta-zona").forEach(r => r.classList.toggle("aktif", r.dataset.zona === idZona));
+function pilihArea(p, layer) {
+  if (p.nodata) {
+    toast("Area \"" + p.nama + "\" tidak punya data hara sehingga tidak bisa dipilih.", true);
+    return;
+  }
+  if (areaDipilih) areaDipilih.setStyle({ weight: 1.2, color: "#FFFFFF" });
+  areaDipilih = layer;
+  layer.setStyle({ weight: 3, color: "#143D2B" });
+  layer.bringToFront();
+
   const w = $("#peta-detail");
   w.hidden = false;
   w.innerHTML = `
-    <p class="label-kecil">ZONA ${z.nama}</p>
-    <p style="font-weight:800; color:var(--hijau-900); margin-bottom:6px">pH ${desimal(z.pH)} · N ${desimal(z.n_persen, 2)} · P ${desimal(z.p_ppm)} ppm · K ${desimal(z.k_me100g, 2)} · ${z.tekstur}</p>
-    <div>${chipHara(z)}</div>
-    <p class="teks-abu" style="margin-top:8px">Nilai contoh representasi peta hara wilayah Bogor, bukan hasil uji laboratorium.</p>
+    <p class="label-kecil">AREA ${String(p.nama).toUpperCase()}</p>
+    <p style="font-weight:800; color:var(--hijau-900); margin-bottom:6px">pH ${desimal(p.pH)} · N ${p.n_band} · P ${p.p_band} · K ${p.k_band} · ${p.tekstur}</p>
+    <p class="teks-abu">Satuan unit lahan: ${p.unit || "-"}, lereng ${p.lereng || "-"} persen. Nilai pH rata-rata area SAFRONS. Band N, P, K hasil pembacaan peta dikonversi ke nilai uji tanah untuk model.</p>
     <div class="dua-kolom" style="margin-top:12px">
       <div class="medan">
-        <label for="zona-nama">Nama lahan Anda</label>
-        <input id="zona-nama" type="text" placeholder="contoh, Sawah Cigeulis">
+        <label for="area-nama">Nama lahan Anda</label>
+        <input id="area-nama" type="text" placeholder="contoh, Sawah ${p.nama}">
       </div>
       <div class="medan">
-        <label for="zona-luas">Luas (ha)</label>
-        <input id="zona-luas" type="number" step="0.05" min="0.05" max="10" value="0.75">
+        <label for="area-luas">Luas (ha)</label>
+        <input id="area-luas" type="number" step="0.05" min="0.05" max="10" value="0.75">
       </div>
     </div>
-    <p id="galat-zona" class="pesan-galat" hidden></p>
-    <button class="tombol utama lebar" id="zona-pakai">Gunakan Zona Ini</button>`;
-  $("#zona-pakai").addEventListener("click", () => {
-    const nama = $("#zona-nama").value.trim();
-    const luas = parseFloat($("#zona-luas").value);
+    <p id="galat-area" class="pesan-galat" hidden></p>
+    <button class="tombol utama lebar" id="area-pakai">Gunakan Area Ini</button>`;
+  $("#area-pakai").addEventListener("click", () => {
+    const nama = $("#area-nama").value.trim();
+    const luas = parseFloat($("#area-luas").value);
     const galat = [];
     if (!nama) galat.push("Isi nama lahan terlebih dahulu.");
     if (!(luas >= 0.05 && luas <= 10)) galat.push("Luas harus 0,05 sampai 10 ha.");
-    if (galat.length) { const g = $("#galat-zona"); g.textContent = galat.join(" "); g.hidden = false; return; }
+    if (galat.length) { const g = $("#galat-area"); g.textContent = galat.join(" "); g.hidden = false; return; }
     state.lahan.push({
-      id: idBaru(), nama, sumber: "peta", zona: z.nama,
-      pH: z.pH, n_persen: z.n_persen, p_ppm: z.p_ppm, k_me100g: z.k_me100g,
-      tekstur: z.tekstur, luas_ha: luas,
+      id: idBaru(), nama, sumber: "peta", zona: p.nama,
+      pH: p.pH, n_persen: p.n_persen, p_ppm: p.p_ppm, k_me100g: p.k_me100g,
+      tekstur: p.tekstur, luas_ha: luas,
     });
     simpanState(state);
-    toast("Lahan \"" + nama + "\" terdaftar");
+    toast("Lahan \"" + nama + "\" terdaftar dari peta hara SAFRONS");
     bukaLayar("lahan");
   });
 }
@@ -403,7 +403,7 @@ $("#pilih-lahan").addEventListener("click", (e) => {
 function tampilkanRingkasanHara() {
   const l = state.lahan.find(t => t.id === lahanTerpilih);
   if (!l) { $("#ringkasan-hara").textContent = ""; return; }
-  $("#ringkasan-hara").innerHTML = `pH ${desimal(l.pH)} · N ${desimal(l.n_persen, 2)} · P ${desimal(l.p_ppm)} ppm · K ${desimal(l.k_me100g, 2)} · ${l.tekstur} · luas ${desimal(l.luas_ha)} ha` + (l.sumber === "uji" ? " (dari uji tanah)" : " (dari peta, contoh zona)");
+  $("#ringkasan-hara").innerHTML = `pH ${desimal(l.pH)} · N ${desimal(l.n_persen, 2)} · P ${desimal(l.p_ppm)} ppm · K ${desimal(l.k_me100g, 2)} · ${l.tekstur} · luas ${desimal(l.luas_ha)} ha` + (l.sumber === "uji" ? " (dari uji tanah)" : " (dari peta hara SAFRONS)");
   $("#rk-luas").value = l.luas_ha;
 }
 

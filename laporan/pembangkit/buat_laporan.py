@@ -373,7 +373,7 @@ def bab1():
 
     h2("1.4 Ruang lingkup")
     tabel("Tabel 1.3 Ruang lingkup MVP", ["Dikerjakan di versi MVP", "Sengaja tidak dikerjakan", "Alasan"], [
-        ["Input lahan lewat peta zona contoh atau hasil uji tanah", "Diagnosis hama dan penyakit dari foto", "Fitur inti memprediksi dari angka, bukan citra, dan beban pengumpulan data foto besar"],
+        ["Input lahan lewat peta hara SAFRONS atau hasil uji tanah", "Diagnosis hama dan penyakit dari foto", "Fitur inti memprediksi dari angka, bukan citra, dan beban pengumpulan data foto besar"],
         ["Prediksi dosis NPK dengan keyakinan dan guardrail", "Draf RDKK otomatis tingkat kelompok", "Butuh akumulasi data banyak petani yang belum ada"],
         ["Konversi kebutuhan pupuk per petak, estimasi biaya, dan paket", "Agen AI yang mengeksekusi otomatis (memesan pupuk, memfinalkan dokumen)", "Keputusan berisiko tinggi tetap pada manusia (prinsip augmented)"],
         ["Penjelasan bahasa sederhana dan peringatan dini", "Peta hara kolaboratif real-time", "Data uji tanah petani baru terkumpul setelah pilot"],
@@ -475,7 +475,7 @@ def bab3():
     h2("3.1 Peta modalitas data")
     tabel("Tabel 3.1 Modalitas data yang benar-benar dipakai produk", ["Modalitas", "Contoh data spesifik", "Berlabel?", "Sumber", "Jumlah", "Preprocessing"], [
         ["Tabular", "pH, N, P, K, tekstur, komoditas, target hasil, musim, label dosis N-P-K", "Ya", "Ekstraksi logika tabel Permentan 40/2007 dan kelas Balittanah (skrip data_proxy.py)", "6.000 baris", "Pembulatan, one-hot encoding kategorikal, rentang dicek ulang terhadap tabel resmi"],
-        ["Spasial", "Zona peta hara wilayah Bogor untuk input cepat", "Tidak dipakai melatih", "Data contoh representasi 12 zona (gen_zona.py), terinspirasi peta 191 area SAFRONS", "12 zona contoh", "Penandaan zona ke nilai hara contoh, diberi label jelas sebagai contoh di antarmuka"],
+        ["Spasial", "Peta hara 191 area wilayah Bogor untuk input cepat (pH rata-rata dan band N-P-K)", "Tidak dipakai melatih", "Data spasial asli SAFRONS dari kode yang kami audit (hara-bogor.geojson, diproses gen_peta.py)", "191 area, 3 di antaranya tanpa data", "Konversi proyeksi UTM ke WGS84, penyederhanaan geometri, pemetaan band N-P-K ke nilai perwakilan skala model (Lampiran C)"],
         ["Teks", "Publikasi teknis rekomendasi pemupukan sebagai rujukan guardrail dan materi tips penyuluhan", "Tidak dipakai melatih", "Dokumen Permentan dan publikasi Balittanah", "Dokumen rujukan", "Diterjemahkan menjadi batas kelas dan kalimat peringatan"],
     ], lebar=[2.0, 4.0, 1.7, 4.2, 1.6, 2.5], ukuran=9)
     p("Jumlah data yang kami tulis adalah jumlah nyata yang kami miliki sekarang, bukan yang direncanakan. Data uji tanah petani belum ada dan statusnya jujur dicatat sebagai kebutuhan pilot.")
@@ -502,10 +502,10 @@ def bab3():
     h2("3.4 Data pipeline dan feature engineering")
     gambar(os.path.join(GAMBAR, "gambar", "pipeline_data.png"), "Gambar 3.1 Pipeline data dari tabel resmi sampai model siap sajikan", 15.5)
     tabel("Tabel 3.4 Fitur terpenting model dan alasannya", ["Fitur", "Data mentah asal", "Transformasi", "Mengapa penting"], [
-        ["pH tanah", "Input uji tanah atau zona peta", "Nilai numerik langsung", "Menentukan ketersediaan hara, pH di bawah 5,5 menaikkan kebutuhan P sebelum pengapuran"],
-        ["N (%)", "Input uji tanah atau zona peta", "Nilai numerik langsung", "Stok nitrogen awal mengurangi dosis N yang perlu diberikan"],
-        ["P (ppm)", "Input uji tanah atau zona peta", "Nilai numerik langsung", "Stok fosfat, sering menjadi faktor pembatas pada tanah masam"],
-        ["K (me/100g)", "Input uji tanah atau zona peta", "Nilai numerik langsung", "Stok kalium berkaitan dengan kualitas butir dan ketahanan tanaman"],
+        ["pH tanah", "Input uji tanah atau peta hara SAFRONS", "Nilai numerik langsung", "Menentukan ketersediaan hara, pH di bawah 5,5 menaikkan kebutuhan P sebelum pengapuran"],
+        ["N (%)", "Input uji tanah atau peta hara SAFRONS", "Nilai numerik langsung", "Stok nitrogen awal mengurangi dosis N yang perlu diberikan"],
+        ["P (ppm)", "Input uji tanah atau peta hara SAFRONS", "Nilai numerik langsung", "Stok fosfat, sering menjadi faktor pembatas pada tanah masam"],
+        ["K (me/100g)", "Input uji tanah atau peta hara SAFRONS", "Nilai numerik langsung", "Stok kalium berkaitan dengan kualitas butir dan ketahanan tanaman"],
         ["Tekstur tanah", "Input pilihan pengguna", "One-hot encoding (3 kelas)", "Tanah liat menyimpan hara lebih baik sehingga sedikit lebih hemat dosis"],
         ["Komoditas dan target hasil", "Pilihan dan input pengguna", "One-hot encoding dan numerik", "Padi dan jagung punya kebutuhan dasar berbeda, target hasil menaikkan kebutuhan"],
         ["Musim tanam", "Pilihan pengguna (bawaan dari kalender)", "One-hot encoding (2 kelas)", "Musim hujan menaikkan risiko pencucian N sehingga dosis N sedikit lebih tinggi"],
@@ -524,7 +524,7 @@ def bab3():
 
     daftar_periksa([
         ["Setiap sumber data punya nama, tautan, dan lisensi", "Terpenuhi, tabel retensi dan skrip pembangkit data ada di Lampiran C"],
-        ["Jumlah data yang ditulis adalah jumlah nyata", "Terpenuhi (6.000 baris proxy, 12 zona contoh)"],
+        ["Jumlah data yang ditulis adalah jumlah nyata", "Terpenuhi (6.000 baris proxy, 191 area peta SAFRONS)"],
         ["Pendekatan AI dipilih dengan alasan dan trade-off", "Terpenuhi (Tabel 3.2, 3.5)"],
         ["Strategi pelabelan beserta penjaminan mutunya dijelaskan", "Terpenuhi, panduan di Lampiran C"],
         ["Bias data diidentifikasi beserta mitigasinya", "Terpenuhi (Tabel 3.3)"],
@@ -595,7 +595,7 @@ def bab5():
     h2("5.1 Ruang lingkup MVP")
     tabel(None, ["Bagian", "Isi"], [
         ["Ringkasan produk", "PupukPintar adalah aplikasi web mobile-first untuk petani padi dan jagung di Bogor dan sekitarnya yang mengubah kondisi lahan menjadi angka dosis pupuk N, P, K per petak lengkap dengan biayanya"],
-        ["In-scope", "Registrasi lahan (peta zona contoh atau uji tanah), prediksi dosis dengan keyakinan dan guardrail, konversi per petak dan biaya, paket modal, penjelasan sederhana, peringatan dini, riwayat, verifikasi penyuluh, consent dan penghapusan data"],
+        ["In-scope", "Registrasi lahan (peta hara SAFRONS atau uji tanah), prediksi dosis dengan keyakinan dan guardrail, konversi per petak dan biaya, paket modal, penjelasan sederhana, peringatan dini, riwayat, verifikasi penyuluh, consent dan penghapusan data"],
         ["Out-of-scope", "Diagnosis foto, RDKK otomatis, agen eksekusi otomatis, peta kolaboratif real-time, komoditas dan wilayah baru (Bab 1.4)"],
         ["Asumsi", "Petani punya smartphone dan koneksi minimal di rumah, poktan, atau kios saprodi, harga pupuk rujukan relatif stabil dalam satu musim"],
         ["Batasan", "Data latih proxy dari tabel resmi, komoditas terbatas, demo berjalan lokal, waktu satu semester"],
@@ -603,7 +603,7 @@ def bab5():
     p("Perubahan sejak AI PRD v1.0 (UTS) dan alasannya:")
     tabel("Tabel 5.1 Perubahan spesifikasi sejak versi UTS", ["Bagian PRD", "Isi di v1.0 (UTS)", "Isi di versi final", "Alasan berubah"], [
         ["Penjelasan rekomendasi", "Model bahasa generatif menyusun penjelasan", "Templat rule-based menyusun penjelasan dari status hara", "Meniadakan risiko angka dikarang, biaya nol, latensi nol, tetap akurat terhadap data model"],
-        ["Sumber input peta", "Peta 191 area SAFRONS", "Peta zona contoh representasi 12 zona wilayah Bogor", "Data SAFRONS tidak terbuka mudah untuk demo, zona contoh diberi label jujur sebagai contoh di antarmuka"],
+        ["Sumber input peta", "Peta 191 area SAFRONS", "Data spasial asli SAFRONS (191 area) dari kode yang kami audit, dengan konversi band ke skala model", "Data asli ternyata tersedia di repositori audit sehingga demo memakai peta sungguhan, bukan representasi"],
         ["Server API", "FastAPI sesuai LKP-P6", "Server pustaka standar Python dengan kontrak JSON sama", "Ekstensi biner pydantic-core diblokir kebijakan Application Control pada mesin anggota, kontrak tidak berubah sehingga migrasi ke FastAPI mudah (Bab 7.6)"],
         ["Estimasi biaya", "Harga pupuk rujukan umum", "Harga HET Urea Rp 2.250 dan SP-36 Rp 2.300 per kg, KCl pasar Rp 5.000 per kg (asumsi tim)", "Kalkulasi biaya jadi bisa ditelusuri dan diuji konsistensinya"],
     ], lebar=[2.8, 4.0, 4.6, 4.6], ukuran=9)
@@ -611,7 +611,7 @@ def bab5():
     h2("5.2 Functional requirements")
     tabel("Tabel 5.2 Daftar fitur dengan user story, prioritas MoSCoW, dan status", ["ID", "Fitur", "User story", "MoSCoW", "AI atau non-AI", "Status"], [
         ["F-01", "Onboarding dan persetujuan data", "Sebagai petani, saya ingin memberi persetujuan data sejak awal, agar saya tahu data saya dipakai untuk apa dan bisa berhenti kapan saja", "Must", "Non-AI", "Selesai"],
-        ["F-02", "Daftar lahan via peta zona atau uji tanah", "Sebagai petani, saya ingin mendaftarkan lahan dengan memilih zona di peta atau memasukkan hasil uji tanah, agar kondisi hara lahan saya dikenali tanpa lab", "Must", "Non-AI (data spasial)", "Selesai"],
+        ["F-02", "Daftar lahan via peta hara SAFRONS atau uji tanah", "Sebagai petani, saya ingin mendaftarkan lahan dengan menandai areanya di peta atau memasukkan hasil uji tanah, agar kondisi hara lahan saya dikenali tanpa lab", "Must", "Non-AI (data spasial)", "Selesai"],
         ["F-03", "Rekomendasi dosis NPK dengan keyakinan", "Sebagai petani, saya ingin menerima angka dosis N, P, K spesifik lahan saya beserta tingkat keyakinan, agar saya tidak lagi menebak takaran", "Must", "AI (predictive + guardrail)", "Selesai"],
         ["F-04", "Konversi per petak, estimasi biaya, paket modal", "Sebagai petani, saya ingin tahu berapa kg pupuk yang harus dibeli dan biayanya, dengan pilihan paket sesuai modal, agar rekomendasi langsung bisa dijalankan", "Must", "Non-AI (kalkulasi deterministik)", "Selesai"],
         ["F-05", "Penjelasan bahasa sederhana", "Sebagai petani awam agronomi, saya ingin tahu alasan rekomendasinya, agar saya paham sebelum menjalankannya", "Should", "AI (templat rule-based)", "Selesai"],
@@ -634,7 +634,7 @@ def bab5():
     h2("5.4 Tabel penelusuran fitur")
     tabel("Tabel 5.4 Penelusuran fitur ke desain, komponen teknis, dan skenario uji", ["ID fitur", "Layar (Bab 6)", "Komponen teknis (Bab 7)", "Skenario uji (Bab 8)"], [
         ["F-01", "Splash dan onboarding", "Halaman splash dengan kotak centang consent, state localStorage", "S-01"],
-        ["F-02", "Lahan Saya, tambah lahan, peta zona, uji tanah", "GET /api/zona, SVG interaktif 12 zona, formulir uji tanah dengan validasi", "S-02, S-03"],
+        ["F-02", "Lahan Saya, tambah lahan, peta hara, uji tanah", "GET /api/peta, peta Leaflet interaktif 191 area SAFRONS, formulir uji tanah dengan validasi", "S-02, S-03"],
         ["F-03", "Rekomendasi (formulir dan hasil)", "POST /rekomendasi, mesin model.py, guardrail konstanta.py", "S-04, S-05"],
         ["F-04", "Hasil (kebutuhan, biaya, paket)", "Konversi kadar unsur Urea 46 persen, SP-36 30 persen, KCl 60 persen, harga di konstanta.py", "S-04"],
         ["F-05", "Hasil (penjelasan sederhana)", "Templat penjelasan dari status hara di model.py", "S-04"],
@@ -687,7 +687,7 @@ def bab6():
     gambar(os.path.join(LAYAR, "01-splash.png"), "Gambar 6.5 Layar entry point terbangun", 6.4)
     gambar(os.path.join(LAYAR, "08-form-rekomendasi.png"), "Gambar 6.6 Layar formulir rekomendasi terbangun", 6.4)
     gambar(os.path.join(LAYAR, "09-hasil-rekomendasi.png"), "Gambar 6.7 Layar hasil rekomendasi terbangun (padi, target 6 t/ha, luas 0,5 ha, keyakinan 81 persen)", 6.4)
-    gambar(os.path.join(LAYAR, "04-peta-zona.png"), "Gambar 6.8 Peta zona contoh untuk pendaftaran lahan", 6.4)
+    gambar(os.path.join(LAYAR, "04-peta-hara.png"), "Gambar 6.8 Peta hara 191 area SAFRONS di atas basemap OpenStreetMap (Leaflet) untuk pendaftaran lahan", 6.4)
 
     h2("6.3 Tipe antarmuka dan tingkat otomasi")
     tabel(None, ["Pilihan", "Isi dan alasan"], [
@@ -697,7 +697,7 @@ def bab6():
 
     h2("6.4 Penanganan ketidakpastian")
     tabel("Tabel 6.3 Enam situasi ketidakpastian dan rancangan tampilannya", ["Situasi", "Yang ditampilkan", "Contoh teks pesan", "Fallback"], [
-        ["Keyakinan tinggi (0,85 ke atas)", "Badge hijau Keyakinan 90 persen (Yakin), tiga kartu dosis, biaya, paket", "Keyakinan 90% (Yakin)", "Tetap disertai disclaimer dan tombol verifikasi penyuluh"],
+        ["Keyakinan tinggi (0,85 ke atas)", "Badge hijau Keyakinan 91 persen (Yakin), tiga kartu dosis, biaya, paket", "Keyakinan 91% (Yakin)", "Tetap disertai disclaimer dan tombol verifikasi penyuluh"],
         ["Keyakinan sedang (0,70 sampai 0,85)", "Badge kuning Cukup yakin, angka tetap tampil dengan sub-label rentang aman", "Keyakinan 81% (Cukup yakin)", "Petani dianjurkan cek ulang, verifikasi penyuluh makin dianjurkan"],
         ["Keyakinan rendah (di bawah 0,70)", "Tanpa angka, kartu menjelaskan alasan, rentang aman resmi tetap tampil", "Model belum cukup yakin untuk kasus ini. Angka tidak ditampilkan agar tidak salah langkah", "Arahan uji tanah laboratorium atau penyuluh"],
         ["Di luar domain (komoditas selain padi-jagung)", "Penolakan dengan pesan spesifik", "komoditas harus Padi atau Jagung", "Pengguna memilih komoditas yang tersedia"],
@@ -751,7 +751,7 @@ def bab7():
     tabel("Tabel 7.2 Kontrak API model AI", ["Endpoint", "Metode", "Input (format)", "Output (format)"], [
         ["/rekomendasi", "POST", "JSON 9 field: pH, n_persen, p_ppm, k_me100g, tekstur, komoditas, target_hasil_t_ha, luas_ha, musim", "JSON: masukan, status_hara, keyakinan, kategori_keyakinan, luar_sebaran_data_latih, tampilkan_angka, dosis_kg_ha (atau null), rentang_aman_kg_ha, kebutuhan_petak_kg, estimasi_biaya_idr, paket (hemat, standar, optimal), peringatan, penjelasan, disclaimer, waktu_proses_ms"],
         ["/model/info", "GET", "Tanpa body", "JSON metrik CV, holdout, latensi, feature importance"],
-        ["/api/zona", "GET", "Tanpa body", "JSON 12 zona contoh dengan pH, N, P, K, tekstur, koordinat gambar"],
+        ["/api/peta", "GET", "Tanpa body", "JSON 191 area SAFRONS: nama, pH rata-rata, band dan nilai perwakilan N-P-K, tekstur, geometri ringkas"],
         ["/api/health", "GET", "Tanpa body", "JSON status layanan dan kesiapan model"],
     ], lebar=[2.4, 1.4, 5.2, 7.0], ukuran=9)
     p("Contoh permintaan dan respons nyata dari aplikasi yang berjalan:")
@@ -771,7 +771,7 @@ def bab7():
     h2("7.5 Hasil build")
     tabel("Tabel 7.4 Bukti fitur Must berjalan end-to-end pada aplikasi", ["ID fitur", "Bukti", "End-to-end?", "Catatan"], [
         ["F-01", "Gambar 6.5 dan langkah uji perjalanan splash sampai beranda", "Ya", "Consent wajib dicentang sebelum masuk"],
-        ["F-02", "Gambar 6.8 (peta zona) dan langkah lahan dari peta serta uji tanah", "Ya", "Dua jalur input teruji, validasi pH 9,4 menolak"],
+        ["F-02", "Gambar 6.8 (peta hara SAFRONS) dan langkah lahan dari peta serta uji tanah", "Ya", "Dua jalur input teruji, validasi pH 9,4 menolak"],
         ["F-03", "Gambar 6.7 dan respons API contoh di 7.3", "Ya", "Dosis, keyakinan, guardrail tampil"],
         ["F-04", "Gambar 6.7 dan langkah paket optimal mengubah biaya", "Ya", "Hemat, standar, optimal mengubah kebutuhan dan biaya"],
     ], lebar=[1.4, 7.0, 2.0, 5.6], ukuran=9.5)
@@ -783,7 +783,7 @@ def bab7():
     h2("7.6 Kendala teknis dan keputusan")
     tabel("Tabel 7.5 Kendala, opsi yang dipertimbangkan, keputusan, dan dampaknya", ["Kendala", "Opsi yang dipertimbangkan", "Keputusan", "Alasan dan dampak"], [
         ["Kebijakan Application Control pada mesin anggota memblokir ekstensi biner pydantic-core (dependensi FastAPI) dan sebagian versi scikit-learn", "Cari pengecualian kebijakan, ganti mesin, atau bangun server tanpa dependensi biner", "Server demo ditulis dengan pustaka standar http.server, scikit-learn dipasang versi 1.8 yang tidak diblokir", "Kontrak API tidak berubah sehingga migrasi ke FastAPI saat produksi bersih. Konvensi endpoint, status 422, dan bentuk galat dipertahankan identik"],
-        ["Peta 191 area SAFRONS tidak tersedia sebagai data terbuka yang mudah dipakai demo", "Menyalin data penuh, menunggu izin, atau membuat representasi contoh", "Peta zona contoh 12 zona dengan label jujur sebagai contoh di antarmuka dan laporan", "Alur pendaftaran via peta tetap teruji tanpa mengklaim data yang bukan milik kami"],
+        ["Koordinat peta SAFRONS ternyata tersimpan dalam proyeksi UTM meter meski berkas .prj mengaku WGS84, dan satuan N-P-K tidak dideklarasikan pada sumbernya", "Memakai apa adanya (peta melenceng), menunggu kepastian satuan, atau mengonversi sendiri dengan dokumentasi lengkap", "Konversi UTM 48S ke WGS84 memakai rumus Transverse Mercator inverse (gen_peta.py), dan N-P-K dipetakan dari band kuintil SAFRONS ke nilai perwakilan skala model (Lampiran C)", "Peta sungguhan 191 area terpakai di demo, konversi dapat diperiksa siapa pun, status hara hasil peta konsisten dengan interpretasi Balittanah kami"],
         ["Model bahasa untuk penjelasan menambah biaya dan risiko halusinasi angka", "Pakai LLM API, atau templat rule-based", "Templat rule-based dari status hara dan musim", "Penjelasan selalu sesuai angka model, biaya nol, latensi nol"],
         ["Label berasal dari logika aturan sehingga model belajar dari aturan yang sama", "Menghentikan proyek, atau jujur memakai proxy dengan rencana data lapangan", "Melanjutkan dengan proxy dan mencatat keterbatasan secara eksplisit", "Ini keterbatasan inti produk (Bab 12.2), data uji tanah dan catatan panen menjadi prioritas pilot"],
     ], lebar=[4.2, 3.8, 3.6, 4.4], ukuran=9)
@@ -813,7 +813,7 @@ def bab8():
     ], lebar=[2.6, 4.2, 5.2, 4.0], ukuran=9.5)
     tabel("Tabel 8.2 Skenario uji", ["ID", "Skenario atau tugas", "Fitur (ID)", "Kriteria berhasil"], [
         ["S-01", "Masuk aplikasi tanpa mencentang persetujuan lalu dengan mencentang", "F-01", "Pesan galat tampil tanpa centang, masuk berhasil dengan centang"],
-        ["S-02", "Mendaftar lahan dari peta zona (pilih zona, isi nama, pakai zona)", "F-02", "Lahan muncul di daftar dengan chip status hara"],
+        ["S-02", "Mendaftar lahan dari peta hara (ketuk area, isi nama, pakai area)", "F-02", "Lahan muncul di daftar dengan chip status hara"],
         ["S-03", "Mendaftar lahan dari uji tanah, termasuk percobaan pH 9,4", "F-02", "pH 9,4 ditolak dengan pesan, input wajar tersimpan"],
         ["S-04", "Menghitung rekomendasi padi pada lahan uji tanah, mengganti paket optimal, mengirim ke penyuluh, membuka riwayat", "F-03 sampai F-07", "Hasil tampil, paket mengubah biaya, riwayat terisi"],
         ["S-05", "Menghitung rekomendasi pada lahan dengan P 150 ppm (luar sebaran)", "F-03, F-06", "Angka disembunyikan, arahan uji lab tampil"],
@@ -857,14 +857,14 @@ def bab8():
         ["Keyakinan pita tengah tidak terkalibrasi baik", "Tabel 8.4, agreement terukur 42,9 persen pada kelompok Cukup yakin yang mengaku 0,83", "Kalibrasi diharapkan mendekati angka keyakinan", "Sedang", "Kategori sedang tetap diberi sub-label rentang dan anjuran cek ulang, kalibrasi ulang menunggu data lapangan, diamati lagi saat pilot"],
         ["Hampir semua kasus dalam sebaran masuk kelompok Yakin (98,8 persen)", "Tabel 8.4", "Diharapkan sebaran keyakinan lebih beragam", "Rendah", "Wajar untuk data proxy yang bersih, uji ulang pada data lapangan yang lebih bising"],
         ["Badge keyakinan terpotong pada layar sempit", "Uji perjalanan langkah hasil, tangkapan layar sebelum perbaikan", "Teks keluar kontainer pada 390 piksel", "Sedang", "Badge dipindah ke baris sendiri, uji ulang lulus tanpa luapan (iterasi di 8.5)"],
-        ["Label zona peta panjang menimpa zona tetangga", "Tangkapan layar peta sebelum perbaikan", "Label Megamendung terpotong", "Rendah", "Lebar kotak zona menyesuaikan panjang nama, disusun per baris, uji ulang lulus"],
+        ["Peta grid awal berupa representasi buatan, bukan data asli", "Perbandingan peta versi awal dengan data sumber SAFRONS", "Input lahan tidak memakai peta sungguhan", "Rendah", "Diganti peta spasial asli 191 area SAFRONS (Leaflet) setelah data ditemukan di repositori audit"],
         ["Konversi kebutuhan petak tidak bisa dihitung ulang dari angka tampilan", "Uji konsistensi konversi pytest gagal di versi awal", "Petani tidak bisa memeriksa 71 kg/ha kali 0,75 ha dibagi 0,30", "Sedang", "Dosis dibulatkan sejak awal sehingga semua turunan konsisten, uji lulus"],
     ], lebar=[4.0, 3.8, 3.6, 1.8, 4.0], ukuran=9)
 
     h2("8.5 Iterasi yang dilakukan")
     tabel("Tabel 8.7 Iterasi perbaikan beserta alasannya", ["Iterasi", "Perubahan", "Alasan (dari temuan)"], [
         ["1", "Badge keyakinan pindah ke baris tersendiri pada layar hasil", "Temuan terpotong pada 390 piksel"],
-        ["2", "Tata letak zona peta disusun ulang per baris dengan lebar dinamis", "Label panjang menimpa zona tetangga"],
+        ["2", "Peta grid 12 zona diganti peta spasial asli 191 area SAFRONS (Leaflet, basemap OpenStreetMap)", "Data asli ditemukan di repositori audit sehingga representasi buatan tidak lagi diperlukan"],
         ["3", "Dosis dibulatkan ke kg/ha utuh sebelum konversi kebutuhan dan biaya", "Uji konsistensi konversi, agar petani bisa memeriksa ulang angka"],
         ["4", "Luas petak selalu terisi dari lahan terpilih", "Konsistensi nilai bawaan formulir"],
     ], lebar=[1.4, 7.0, 7.6], ukuran=9.5)
@@ -930,7 +930,7 @@ def bab9():
     tabel("Tabel 9.4 Strategi penghematan dan kaitannya dengan arsitektur Bab 7", ["Strategi", "Penerapan di produk", "Perkiraan penghematan"], [
         ["Model kecil tanpa GPU", "Random Forest 300 pohon berukuran belasan MB, inferensi in-process dalam server yang sama", "Tidak perlu layanan model terpisah atau GPU, satu server cukup"],
         ["Penjelasan berbasis templat, bukan LLM", "Field penjelasan disusun rule-based di model.py", "Biaya token nol pada jalur utama"],
-        ["Data peta statis", "Zona disajikan dari berkas JSON statis lewat GET /api/zona", "Tidak ada query basis data per kunjungan peta"],
+        ["Data peta statis", "Peta 191 area disajikan dari berkas GeoJSON statis ringkas lewat GET /api/peta", "Tidak ada query basis data per kunjungan peta"],
         ["Pelatihan musiman berbatch", "train.py dijalankan per musim, bukan pelatihan daring", "Biaya komputasi pelatihan nyaris nol"],
     ], lebar=[4.2, 7.0, 4.8], ukuran=9.5)
 
@@ -1053,7 +1053,7 @@ def bab11():
     tabel("Tabel 11.4 Hambatan adopsi dan mitigasinya", ["Hambatan", "Bukti atau indikasi", "Mitigasi"], [
         ["Sinyal tidak stabil di lahan", "Asumsi profil petani (sinyal memadai di rumah dan kios)", "Hasil tersimpan lokal, pesan galat jelas, alur bisa diulang saat sinyal kembali"],
         ["Kepercayaan pada angka AI", "Umum pada produk AI untuk petani, dan terlihat pada persona", "Badge keyakinan jujur, rentang aman resmi selalu tampil, verifikasi penyuluh menjadi bagian alur bukan tambahan"],
-        ["Beban mengisi data uji tanah", "Petani tidak punya angka lab", "Jalur peta zona tanpa angka, atau input kasar yang tetap dijaga guardrail"],
+        ["Beban mengisi data uji tanah", "Petani tidak punya angka lab", "Jalur peta hara tanpa angka, atau input kasar yang tetap dijaga guardrail"],
         ["Risiko aplikasi dianggap pengganti penyuluh", "Salah paham peran", "Pesan di Papan Penyuluhan dan disclaimer yang menegaskan verifikasi penyuluh"],
     ], lebar=[4.0, 5.0, 7.0], ukuran=9.5)
 
@@ -1084,7 +1084,7 @@ def bab12():
 
     h2("12.2 Keterbatasan dan saran")
     tabel(None, ["Aspek", "Isi"], [
-        ["Keterbatasan produk", "Data latih adalah proxy dari logika tabel resmi sehingga keunggulan angka belum terbukti pada kondisi lapangan nyata. Komoditas terbatas padi dan jagung, wilayah menyasar Bogor. Data peta zona adalah contoh representasi. Panel penyuluh dan riwayat berjalan lokal di perangkat, belum daring"],
+        ["Keterbatasan produk", "Data latih adalah proxy dari logika tabel resmi sehingga keunggulan angka belum terbukti pada kondisi lapangan nyata. Komoditas terbatas padi dan jagung, wilayah menyasar Bogor. Nilai N-P-K dari peta memakai konversi band yang disederhanakan, bukan hasil uji lab per petak. Panel penyuluh dan riwayat berjalan lokal di perangkat, belum daring"],
         ["Keterbatasan proses", "Uji usability dilakukan terotomasi dan oleh anggota tim, bukan petani sasaran. Persona belum divalidasi wawancara. Mitra poktan belum dihubungi. Angka harga pupuk dan biaya server adalah asumsi yang ditandai jelas"],
         ["Saran perbaikan", "Jalankan pilot satu poktan sesuai Bab 11.2 untuk mengumpulkan data uji tanah dan catatan panen, lalu latih ulang model dan ukur ulang kalibrasi keyakinan pada data lapangan. Setelah itu migrasikan server ke FastAPI dengan kontrak yang sama dan rilis APK. Validasi persona lewat wawancara singkat saat sosialisasi pilot"],
     ], lebar=[3.2, 12.8], ukuran=10)
@@ -1141,7 +1141,7 @@ def lampiran():
     h1("Lampiran")
 
     h2("Lampiran A. AI PRD final")
-    p("PRD final PupukPintar adalah gabungan Bab 5 (ruang lingkup, tabel 5.2 functional requirements dengan ID F-01 sampai F-09, tabel 5.3 NFR terukur, dan tabel 5.4 penelusuran fitur) plus catatan perubahan dari versi UTS pada Tabel 5.1. Tiga perubahan utama dari PRD v1.0 adalah penjelasan generatif menjadi templat rule-based demi akurasi dan biaya nol, sumber input peta menjadi zona contoh berlabel jujur, dan server demo memakai pustaka standar Python dengan kontrak JSON yang identik rencana FastAPI. Seluruh field kontrak, ID fitur, dan NFR tidak berubah dari v1.0 sehingga penelusuran tetap satu garis.")
+    p("PRD final PupukPintar adalah gabungan Bab 5 (ruang lingkup, tabel 5.2 functional requirements dengan ID F-01 sampai F-09, tabel 5.3 NFR terukur, dan tabel 5.4 penelusuran fitur) plus catatan perubahan dari versi UTS pada Tabel 5.1. Tiga perubahan utama dari PRD v1.0 adalah penjelasan generatif menjadi templat rule-based demi akurasi dan biaya nol, sumber input peta berpindah dari rencana zona contoh ke peta spasial asli SAFRONS, dan server demo memakai pustaka standar Python dengan kontrak JSON yang identik rencana FastAPI. Seluruh field kontrak, ID fitur, dan NFR tidak berubah dari v1.0 sehingga penelusuran tetap satu garis.")
 
     h2("Lampiran B. Tautan")
     tabel(None, ["Item", "Tautan"], [
@@ -1157,9 +1157,19 @@ def lampiran():
     p("Cara membaca label dosis dari tabel resmi: dosis dasar padi N 200, P 75, K 50 kg/ha dan jagung N 275, P 140, K 70 kg/ha pada kondisi tanah dan target sedang, dikoreksi proporsional terhadap status hara menurut batas kelas Balittanah (N 0,10, 0,21, 0,40, 0,60, P 5, 11, 26, 60, K 0,10, 0,21, 0,41, 0,80), ditambah efek target hasil, penyesuaian tanah masam (P naik 15 persen dan N naik 5 persen pada pH di bawah 5,5), faktor tekstur, dan tambahan N 5 persen musim hujan. Hasil akhir dikunci rentang aman Permentan (padi N 150-250, P 50-100, K 25-75, jagung N 200-350, P 100-200, K 40-100 kg/ha). Penanganan data kosong tidak diperlukan karena dataset dibangkitkan penuh, sedangkan aplikasi menolak input kosong dengan pesan per medan.")
     p("Penjaminan mutu: fungsi label deterministik dan diaudit terhadap rentang resmi, perubahan logika hanya lewat satu berkas sehingga jejaknya jelas pada riwayat git. Rencana mutu lanjutan: saat data lapangan masuk, sampel diberi label ganda oleh dua penilai dan tingkat kesepakatannya dihitung sebelum model dilatih ulang.")
 
+    p("Pemetaan band SAFRONS ke nilai perwakilan skala model (peta wilayah):")
+    tabel("Tabel C.1 Konversi band N-P-K peta SAFRONS ke nilai uji tanah model", ["Band SAFRONS", "Ambang pemisah band (nilai sumber)", "N (persen)", "P (ppm)", "K (me/100g)"], [
+        ["Sangat rendah", "N di bawah 2,0, P di bawah 6,7, K di bawah 147,0", "0,07", "3,0", "0,06"],
+        ["Rendah", "N di bawah 2,5, P di bawah 7,8, K di bawah 197,5", "0,15", "8,0", "0,15"],
+        ["Sedang", "N di bawah 4,2, P di bawah 8,0, K di bawah 331,2", "0,30", "18,0", "0,30"],
+        ["Tinggi", "N di bawah 5,5, P di bawah 9,0, K di bawah 447,9", "0,50", "40,0", "0,60"],
+        ["Sangat tinggi", "nilai pada atau di atas ambang terakhir", "0,85", "90,0", "1,00"],
+    ], lebar=[3.0, 6.6, 2.2, 2.2, 2.0], ukuran=9.5)
+    p("Nilai perwakilan dipilih agar status hara menurut batas kelas Balittanah yang kami pakai (Bab 3) jatuh pada kelas yang sama dengan band aslinya, sehingga rekomendasi dari peta konsisten dengan pembacaan SAFRONS. Area tanpa data (3 area) tidak dapat dipilih, meniru perilaku SAFRONS.")
+
     h2("Lampiran D. Hasil pengujian (data mentah)")
     p("Data mentah lengkap tersimpan di repositori dan dapat diulang siapa pun:")
-    bullet("tests/test_api.py, 12 pengujian pytest (kontrak, guardrail 45 kombinasi ekstrem, luar sebaran, input buruk, determinisme, konversi dan biaya, paket, peringatan pH, model info dan zona, berkas statis, latensi p95). Hasil terakhir 12 lulus.")
+    bullet("tests/test_api.py, 12 pengujian pytest (kontrak, guardrail 45 kombinasi ekstrem, luar sebaran, input buruk, determinisme, konversi dan biaya, paket, peringatan pH, model info dan peta, berkas statis, latensi p95). Hasil terakhir 12 lulus.")
     bullet("tests/perjalanan_ui.py, 18 langkah Playwright pada Chromium 390 piksel dengan pemeriksaan luapan horizontal dan perekaman galat konsol. Hasil terakhir 18 lulus tanpa galat konsol, tangkapan layarnya di docs/tangkapan-layar.")
     bullet("tests/hasil_evaluasi_tambahan.json, hasil baseline, kalibrasi keyakinan, dan contoh prediksi.")
     bullet("docs/perjalanan_ui_hasil.txt, catatan keluaran perjalanan UI.")

@@ -11,7 +11,7 @@ produksi, kontrak yang sama tinggal dipindahkan ke FastAPI (lihat laporan Bab 7)
 Menyajikan:
     POST /rekomendasi   : kontrak API model AI (LKP-P6, diperluas paket+penjelasan)
     GET  /model/info    : metrik model untuk transparansi pengguna
-    GET  /api/zona      : data contoh zona peta hara wilayah Bogor
+    GET  /api/peta       : peta hara 191 area SAFRONS (data asli, hasil gen_peta.py)
     GET  /api/health    : status layanan
     GET  /*             : antarmuka web (folder ../frontend)
 
@@ -110,8 +110,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.kirim_json({"status": "ok", "model_siap": model_siap})
         if path == "/model/info":
             return self.kirim_json(mesin.baca_metrik())
-        if path == "/api/zona":
-            with open(os.path.join(FRONTEND, "data", "zona_peta.json"), encoding="utf-8") as f:
+        if path == "/api/peta":
+            with open(os.path.join(FRONTEND, "data", "peta_safrons.json"), encoding="utf-8") as f:
                 return self.kirim_json(json.load(f))
         if path == "/":
             return self.kirim_berkas(os.path.join(FRONTEND, "index.html"))

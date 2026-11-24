@@ -3,8 +3,8 @@
 [OK] beranda keadaan kosong 
 [OK] lahan keadaan kosong 
 [OK] layar pilih sumber lahan 
-[OK] peta zona termuat 
-[OK] lahan dari peta terdaftar 
+[OK] peta hara SAFRONS termuat (191 area) 
+[OK] lahan dari peta hara SAFRONS terdaftar 
 [OK] form uji tanah menolak pH 9,4 
 [OK] lahan dari uji tanah terdaftar 
 [OK] form rekomendasi terisi 
@@ -15,7 +15,7 @@
 [OK] verifikasi penyuluh disetujui (keluar dari daftar menunggu) 
 [OK] profil menampilkan metrik model nyata 
 [OK] keadaan luar sebaran menyembunyikan angka 
-[OK] hasil jagung Keyakinan 89% (Yakin)
+[OK] hasil jagung Keyakinan 91% (Yakin)
 
 === RINGKASAN PERJALANAN ===
 OK splash tampil 
@@ -23,8 +23,8 @@ OK galat consent tanpa centang
 OK beranda keadaan kosong 
 OK lahan keadaan kosong 
 OK layar pilih sumber lahan 
-OK peta zona termuat 
-OK lahan dari peta terdaftar 
+OK peta hara SAFRONS termuat (191 area) 
+OK lahan dari peta hara SAFRONS terdaftar 
 OK form uji tanah menolak pH 9,4 
 OK lahan dari uji tanah terdaftar 
 OK form rekomendasi terisi 
@@ -35,5 +35,5 @@ OK riwayat tersimpan
 OK verifikasi penyuluh disetujui (keluar dari daftar menunggu) 
 OK profil menampilkan metrik model nyata 
 OK keadaan luar sebaran menyembunyikan angka 
-OK hasil jagung Keyakinan 89% (Yakin)
+OK hasil jagung Keyakinan 91% (Yakin)
 Tanpa galat konsol.

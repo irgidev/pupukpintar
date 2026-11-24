@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/leaflet.css">
 <link rel="stylesheet" href="styles.css">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 </head>
@@ -109,19 +110,19 @@
       </button>
     </section>
 
-    <!-- ============ PETA ZONA ============ -->
+    <!-- ============ PETA HARA SAFRONS ============ -->
     <section class="tampilan" id="v-peta" hidden>
       <button class="tombol-kembali" data-buka="tambah-lahan" aria-label="Kembali">
         <svg viewBox="0 0 24 24" class="ikon" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <h1 class="judul-layar">Peta Hara Wilayah</h1>
-      <p class="subjudul-layar">Ketuk salah satu zona untuk melihat kondisi haranya.</p>
-      <div id="peta-wadah" class="peta-wadah">
+      <p class="subjudul-layar">Ketuk area di peta untuk melihat kondisi haranya. Data 191 area SAFRONS.</p>
+      <div class="peta-wadah">
+        <div id="peta-leaflet" class="peta-leaflet" role="application" aria-label="Peta hara wilayah Bogor"></div>
         <p class="keadaan-muat" id="peta-muat">Memuat peta…</p>
         <p class="keadaan-galat" id="peta-galat" hidden>Peta gagal dimuat. <button class="tautan" id="peta-coba-lagi">Coba lagi</button></p>
-        <svg id="peta-svg" viewBox="0 0 380 296" hidden aria-label="Peta zona hara wilayah Bogor"></svg>
       </div>
-      <div id="peta-detail" class="kartu" hidden><!-- detail zona terpilih --></div>
+      <div id="peta-detail" class="kartu" hidden><!-- detail area terpilih --></div>
     </section>
 
     <!-- ============ FORM UJI TANAH ============ -->
@@ -333,6 +334,7 @@
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 </div>
 
+<script src="assets/leaflet.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
