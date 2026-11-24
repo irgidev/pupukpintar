@@ -217,7 +217,7 @@ def slide1():
     kotak_teks(s, 1.12, 5.22, 1.6, 0.3, "COBA SENDIRI", ukuran=10.5, tebal=True, warna=KUNING)
     kotak_teks(s, 1.12, 5.55, 6.9, 0.9,
                "Aplikasi: http://127.0.0.1:8000 (jalankan python server.py sesuai README)\n"
-               "GitHub: github.com/irgidev/pupukpintar   ·   Figma: bit.ly/figma-pupukpintar",
+               "GitHub: github.com/irgidev/pupukpintar\nFigma: figma.com/design/rSkPUlILq9yMteqXRwDBHF/PupukPintar\nVideo: drive.google.com/drive/folders/1hZzJHdhQZEa4-a4qC8jQDy1sYrweZVA1",
                ukuran=11, warna=PUTIH, baris=1.35)
     qr = s.shapes.add_picture(os.path.join(SINI, "..", "qr_repo.png"), Inches(9.05), Inches(4.98), height=Inches(1.62))
     qr.line.color.rgb = PUTIH
@@ -350,13 +350,12 @@ def slide4():
 
     kartu(s, 5.3, 6.05, 7.48, 1.0, warna_isi=KUNING_MUDA, radius=0.08,
           judul="RENCANA CADANGAN", judul_warna=NAVY, judul_ukuran=11,
-          isi="Jika koneksi gagal, tangkapan layar lengkap setiap langkah ada di docs/tangkapan-layar repositori, "
-              "lalu alur diulang setelah koneksi pulih. Data demo pasti berhasil: padi, pH 5,4, target 6 t/ha.",
+          isi="Jika demo langsung terhalang, putar video demo di Google Drive (tautan pada slide\nsampul dan penutup). Data demo pasti berhasil: padi, pH 5,4, target 6 t/ha.",
           isi_ukuran=10.5)
 
     catatan(s, "SLIDE 4 DEMO (2 sampai 3 menit, bagian terpenting). Demokan langsung alur tiga ketukan: pilih petak, "
                "Hitung Rekomendasi, hasil. Sebut ID fitur F-03 dan F-04 agar cocok dengan laporan. "
-               "Siapkan akun tidak diperlukan karena tanpa login. Video cadangan menyusul, sementara itu tangkapan layar lengkap ada di repositori.")
+               "Video cadangan tersedia di Google Drive; tangkapan layar lengkap setiap langkah juga ada di repositori.")
     return s
 
 
@@ -648,12 +647,11 @@ def slide10():
         garis_abu.shadow.inherit = False
         y += 0.78
 
-    kartu(s, 0.9, 5.95, 7.3, 1.1, warna_isi=RGBColor(0x14, 0x2C, 0x50), garis=RGBColor(0x3A, 0x52, 0x7C), radius=0.1)
-    kotak_teks(s, 1.12, 6.1, 1.5, 0.3, "TAUTAN", ukuran=10.5, tebal=True, warna=KUNING)
-    kotak_teks(s, 1.12, 6.4, 6.9, 0.6,
-               "GitHub: github.com/irgidev/pupukpintar   ·   Figma: bit.ly/figma-pupukpintar\n"
-               "Aplikasi demo: http://127.0.0.1:8000 (README repositori)",
-               ukuran=11, warna=PUTIH, baris=1.3)
+    kartu(s, 0.9, 5.82, 7.3, 1.5, warna_isi=RGBColor(0x14, 0x2C, 0x50), garis=RGBColor(0x3A, 0x52, 0x7C), radius=0.1)
+    kotak_teks(s, 1.12, 5.95, 1.5, 0.3, "TAUTAN", ukuran=10.5, tebal=True, warna=KUNING)
+    kotak_teks(s, 1.12, 6.28, 6.9, 0.9,
+               "GitHub: github.com/irgidev/pupukpintar\nFigma: figma.com/design/rSkPUlILq9yMteqXRwDBHF/PupukPintar\nAplikasi demo: http://127.0.0.1:8000\nVideo: drive.google.com/drive/folders/1hZzJHdhQZEa4-a4qC8jQDy1sYrweZVA1",
+               ukuran=10.5, warna=PUTIH, baris=1.3)
     kotak_teks(s, 8.5, 6.3, 4.2, 0.4, "Tanya jawab  ·  PupukPintar  ·  Kelompok 14", ukuran=12, warna=ABU_TERANG, rata=PP_ALIGN.RIGHT)
 
     catatan(s, "SLIDE 10 PENUTUP (30 detik plus tanya jawab). Satu kalimat bukti per kriteria, angkanya sama dengan slide sebelumnya. "

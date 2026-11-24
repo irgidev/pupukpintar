@@ -18,10 +18,11 @@ Jalankan dari folder laporan/pembangkit:
 
 import json
 import os
+import re
 import sys
 
 from docx import Document
-from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING, WD_TAB_ALIGNMENT, WD_TAB_LEADER
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
@@ -52,6 +53,7 @@ TAUTAN = {
     "github_poc": "https://github.com/irgidev/pupukpintar-poc",
     "figma": "https://www.figma.com/design/rSkPUlILq9yMteqXRwDBHF/PupukPintar?node-id=0-1",
     "app": "http://127.0.0.1:8000 (demo lokal, cara menjalankan ada di README repositori)",
+    "video": "https://drive.google.com/drive/folders/1hZzJHdhQZEa4-a4qC8jQDy1sYrweZVA1",
 }
 
 # ----------------------------------------------------------------------
@@ -72,12 +74,12 @@ for s in doc.sections:
 def atur_gaya():
     normal = doc.styles["Normal"]
     normal.font.name = "Times New Roman"
-    normal.font.size = Pt(12)
+    normal.font.size = Pt(11)
     normal.paragraph_format.line_spacing = 1.5
     normal.paragraph_format.space_after = Pt(6)
     normal.element.rPr.rFonts.set(qn("w:eastAsia"), "Times New Roman")
 
-    for nama, ukuran, sebelum in (("Heading 1", 14, 18), ("Heading 2", 12.5, 12), ("Heading 3", 12, 8)):
+    for nama, ukuran, sebelum in (("Heading 1", 14, 16), ("Heading 2", 12, 12), ("Heading 3", 12, 8)):
         gaya = doc.styles[nama]
         gaya.font.name = "Times New Roman"
         gaya.font.size = Pt(ukuran)
@@ -86,6 +88,7 @@ def atur_gaya():
         gaya.paragraph_format.space_before = Pt(sebelum)
         gaya.paragraph_format.space_after = Pt(6)
         gaya.paragraph_format.line_spacing = 1.3
+    doc.styles["Heading 1"].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
 atur_gaya()
 
@@ -123,19 +126,21 @@ if os.path.exists(_jalur_halaman):
 # pembantu penulisan
 # ----------------------------------------------------------------------
 
-def p(isi, rata="justify", ukuran=12, sebelum=0, sesudah=6, miring=False, gaya=None):
+def p(isi, rata="justify", ukuran=11, sebelum=0, sesudah=6, miring=False, gaya=None):
     par = doc.add_paragraph(style=gaya)
     par.alignment = {"justify": WD_ALIGN_PARAGRAPH.JUSTIFY, "tengah": WD_ALIGN_PARAGRAPH.CENTER,
                      "kiri": WD_ALIGN_PARAGRAPH.LEFT, "kanan": WD_ALIGN_PARAGRAPH.RIGHT}[rata]
     par.paragraph_format.space_before = Pt(sebelum)
     par.paragraph_format.space_after = Pt(sesudah)
+    if rata == "justify":
+        par.paragraph_format.first_line_indent = Cm(1.0)
     run = par.add_run(isi)
     run.font.size = Pt(ukuran)
     run.italic = miring
     return par
 
 
-def bullet(isi, ukuran=12):
+def bullet(isi, ukuran=11):
     par = doc.add_paragraph(style="List Bullet")
     par.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     par.paragraph_format.line_spacing = 1.4
@@ -151,6 +156,8 @@ def h1(isi):
 
 
 def h2(isi):
+    if re.match(r"^\d+\.\d+ ", isi):
+        isi = re.sub(r"^(\d+\.\d+) ", r"\1. ", isi)
     par = doc.add_heading(isi, level=2)
     par.paragraph_format.keep_with_next = True
 
@@ -246,79 +253,117 @@ def kode(teks_json):
 # HALAMAN SAMPUL
 # ======================================================================
 def sampul():
-    par = doc.add_paragraph()
-    par.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    par.paragraph_format.space_after = Pt(0)
-    par.add_run().add_picture(os.path.join(REPO, "..", "proyek_akhir", "Logo-IPB-baru1000.png"), width=Cm(3.2))
+    def baris_sampul(teks, ukuran, tebal=False, sesudah=6):
+        par = doc.add_paragraph()
+        par.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        par.paragraph_format.space_after = Pt(sesudah)
+        par.paragraph_format.line_spacing = 1.3
+        run = par.add_run(teks)
+        run.font.size = Pt(ukuran)
+        run.bold = tebal
 
-    p("LAPORAN AKHIR PRODUK", rata="tengah", ukuran=16, sebelum=4, sesudah=0)
-    par = doc.add_paragraph()
-    par.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    par.paragraph_format.space_after = Pt(0)
-    run = par.add_run("Perancangan Produk Kecerdasan Buatan untuk Pertanian")
-    run.font.size = Pt(12)
-    p("Grand Demo Day", rata="tengah", ukuran=11, sesudah=6)
-
-    p("PupukPintar", rata="tengah", ukuran=17, sesudah=0)
-    par = doc.add_paragraph()
-    par.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    par.paragraph_format.space_after = Pt(6)
-    run = par.add_run("Rekomendasi Dosis Pupuk N, P, K Presisi per Lahan untuk Petani Padi dan Jagung di Bogor dan Sekitarnya")
-    run.font.size = Pt(11)
-
-    tabel(None, ["Item", "Keterangan"], [
-        ["Nama produk", "PupukPintar"],
-        ["Tagline", "Membantu petani mengetahui dosis pupuk yang tepat untuk lahannya sendiri"],
-        ["Kelompok", "14"],
-        ["Topik responsi", "Rekomendasi Dosis Pupuk Presisi per Lahan (kelanjutan audit SAFRONS)"],
-        ["Semester / tahun ajaran", "Ganjil 2026/2027"],
-    ], lebar=[4.6, 11.4], ukuran=9.5, padat=True)
-
-    tabel("Anggota kelompok", ["No", "Nama lengkap", "NIM", "Peran utama dalam tim"], [
-        ["1", "Irgi Setiawan", "M0405241018", "Model, data, dan evaluasi"],
-        ["2", "Syarif Abdullah Assagaf", "M0405241033", "Server, pengujian, dan integrasi"],
-        ["3", "Thogianna A. M. Sinaga", "M0405241077", "Antarmuka, desain, dan wireframe"],
-    ], lebar=[0.9, 5.4, 3.1, 6.6], ukuran=9.5, padat=True)
-
-    tabel("Tautan wajib", ["Item", "URL", "Catatan akses"], [
-        ["Repositori GitHub", TAUTAN["github"], "publik, berisi aplikasi, PoC, pengujian, laporan, presentasi"],
-        ["Desain Figma", TAUTAN["figma"], "wireframe low-fidelity, berisi tiga layar terpenting"],
-        ["Desain high-fidelity", "docs/desain-figma pada repositori", "tiga SVG siap impor ke Figma beserta panduan"],
-        ["Aplikasi", "http://127.0.0.1:8000", "demo lokal tanpa akun, jalankan python server.py sesuai README"],
-        ["Video demo", "menyusul menjelang Demo Day", "mengikuti skenario uji Bab 8.3"],
-    ], lebar=[3.2, 6.2, 6.6], ukuran=9, padat=True)
-
+    baris_sampul("LAPORAN PROYEK PPKBP", 14, True, 10)
+    baris_sampul("Ditunjukkan untuk memenuhi tugas MK. Perancangan Produk Kecerdasan Buatan untuk Pertanian (KEB1322)", 12, False, 18)
+    baris_sampul("Disusun Oleh Kelompok 14 | K1", 14, True, 8)
+    baris_sampul("Irgi Setiawan - M0405241018", 12, False, 2)
+    baris_sampul("Syarif Abdullah Assagaf - M0405241033", 12, False, 2)
+    baris_sampul("Thogianna Anggitouli Metanoia Sinaga - M0405241077", 12, False, 20)
+    par_logo = doc.add_paragraph()
+    par_logo.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    par_logo.paragraph_format.space_after = Pt(20)
+    par_logo.add_run().add_picture(os.path.join(REPO, "..", "proyek_akhir", "Logo-IPB-baru1000.png"), width=Cm(4.5))
+    baris_sampul("PROGRAM STUDI KECERDASAN BUATAN", 14, True, 8)
+    baris_sampul("SEKOLAH SAINS DATA MATEMATIKA DAN INFORMATIKA", 14, True, 8)
+    baris_sampul("IPB UNIVERSITY", 14, True, 8)
+    baris_sampul("BOGOR", 14, True, 8)
+    baris_sampul("2026", 14, True, 0)
     pecah_halaman()
 
 
-# ======================================================================
-# DAFTAR ISI (dua lintasan, nomor halaman diisi lintasan kedua)
-# ======================================================================
-ENTRI_TOI = [
-    ("Ringkasan Eksekutif", "ringkasan"),
-    ("Bab 1 Pendahuluan", "bab1"),
-    ("Bab 2 Analisis Peluang dan Pengguna", "bab2"),
-    ("Bab 3 Strategi Data dan Pendekatan AI", "bab3"),
-    ("Bab 4 Metrik Keberhasilan dan MVQ", "bab4"),
-    ("Bab 5 Spesifikasi Produk (AI PRD)", "bab5"),
-    ("Bab 6 Rancangan UX dan Arsitektur Informasi", "bab6"),
-    ("Bab 7 Arsitektur dan Implementasi Teknis", "bab7"),
-    ("Bab 8 Pengujian dan Evaluasi", "bab8"),
-    ("Bab 9 Ekonomi AI", "bab9"),
-    ("Bab 10 Governance, Etika, dan Keamanan", "bab10"),
-    ("Bab 11 Strategi Adopsi dan Rencana Lanjutan", "bab11"),
-    ("Bab 12 Penutup", "bab12"),
-    ("Daftar Pustaka", "pustaka"),
-    ("Lampiran A sampai E", "lampiran"),
-]
+def judul_depan(teks):
+    par = doc.add_heading(teks.upper(), level=1)
+    par.paragraph_format.keep_with_next = True
 
+
+def baris_daftar(nama, halaman, indent=0.0):
+    par = doc.add_paragraph()
+    pf = par.paragraph_format
+    pf.line_spacing = 1.35
+    pf.space_after = Pt(2)
+    pf.left_indent = Cm(indent)
+    pf.right_indent = Cm(1.4)
+    pf.tab_stops.add_tab_stop(Cm(15.8), WD_TAB_ALIGNMENT.RIGHT, WD_TAB_LEADER.DOTS)
+    run = par.add_run(nama)
+    run.font.size = Pt(11)
+    run2 = par.add_run("\t" + str(halaman))
+    run2.font.size = Pt(11)
+
+
+def subbab_dari_sumber():
+    src = open(os.path.abspath(__file__), encoding="utf-8").read()
+    judul = re.findall(r'h2\("(\d+\.\d+ [^"]+)"\)', src)
+    return [re.sub(r"^(\d+\.\d+) ", r"\1. ", t) for t in judul]
+
+
+def caption_dari_sumber(jenis):
+    src = open(os.path.abspath(__file__), encoding="utf-8").read()
+    hasil = []
+    panggilan = "gambar(" if jenis == "gambar" else "tabel("
+    awalan = "Gambar " if jenis == "gambar" else "Tabel "
+    for baris in src.splitlines():
+        if panggilan not in baris:
+            continue
+        pola = "([^" + chr(34) + "]*)"
+        for kutip in re.findall(pola, baris):
+            if kutip.startswith(awalan):
+                hasil.append(kutip)
+                break
+    return hasil
 
 def daftar_isi():
-    h1("Daftar Isi")
-    tabel(None, ["Bagian", "Halaman"],
-          [[nama, str(HALAMAN_ISI.get(kunci, "..."))] for nama, kunci in ENTRI_TOI],
-          lebar=[13.0, 3.0])
-    p("Catatan pembacaan: setiap bab ditutup dengan daftar periksa yang memetakan isi bab kebutir penilaian Demo Day.", ukuran=10.5, miring=True)
+    judul_depan("Daftar Isi")
+    hal = HALAMAN_ISI
+
+    def nomor(kunci):
+        if not hal:
+            return "..."
+        return str(hal.get(kunci, "..."))
+
+    baris_daftar("Daftar Isi", nomor("isi"))
+    baris_daftar("Daftar Gambar", nomor("gambar"))
+    baris_daftar("Daftar Tabel", nomor("tabel"))
+    baris_daftar("Ringkasan Eksekutif", nomor("ringkasan"))
+    sumber = open(os.path.abspath(__file__), encoding="utf-8").read()
+    bab_list = re.findall(r'h1\("((?:Bab) \d+ [^"]+)"\)', sumber)
+    sub_list = subbab_dari_sumber()
+    for urut, bab_t in enumerate(bab_list, start=1):
+        baris_daftar(bab_t, hal.get("bab", {}).get(bab_t, "...") if hal else "...")
+        for sub_t in sub_list:
+            if sub_t.startswith("%d." % urut):
+                baris_daftar(sub_t, hal.get("sub", {}).get(sub_t.upper(), "...") if hal else "...", indent=0.75)
+    baris_daftar("Daftar Pustaka", nomor("pustaka"))
+    baris_daftar("Lampiran", nomor("lampiran"))
+    pecah_halaman()
+
+def kunci_urut_caption(cap):
+    nomor = cap.split(" ", 1)[1].split(" ", 1)[0]
+    huruf, _, angka = nomor.partition(".")
+    return (0 if huruf.isdigit() else 1, int(huruf) if huruf.isdigit() else ord(huruf[0]), int(angka))
+
+
+def daftar_gambar():
+    judul_depan("Daftar Gambar")
+    hal = HALAMAN_ISI
+    for cap in sorted(caption_dari_sumber("gambar"), key=kunci_urut_caption):
+        baris_daftar(cap, str(hal.get("capg", {}).get(cap, "...")) if hal else "...")
+    pecah_halaman()
+
+
+def daftar_tabel():
+    judul_depan("Daftar Tabel")
+    hal = HALAMAN_ISI
+    for cap in sorted(caption_dari_sumber("tabel"), key=kunci_urut_caption):
+        baris_daftar(cap, str(hal.get("capt", {}).get(cap, "...")) if hal else "...")
     pecah_halaman()
 
 
@@ -326,7 +371,7 @@ def daftar_isi():
 # RINGKASAN EKSEKUTIF
 # ======================================================================
 def ringkasan():
-    h1("Ringkasan Eksekutif")
+    judul_depan("RINGKASAN EKSEKUTIF")
     tabel(None, ["Bagian", "Isi"], [
         ["Masalah", "Petani padi dan jagung di Bogor memberi pupuk dari kebiasaan atau ikut-ikutan tetangga padahal kondisi hara antarpetak berbeda. Uji tanah laboratorium berbayar dan lambat, sedangkan aplikasi peta hara yang ada, termasuk SAFRONS yang kami audit, berhenti pada saran umum tanpa angka dosis."],
         ["Solusi AI", "PupukPintar, aplikasi web mobile-first yang memprediksi dosis pupuk N, P, K (kg/ha) spesifik per lahan dengan model Random Forest, lengkap keyakinan, konversi kebutuhan per petak, estimasi biaya, dan paket sesuai modal."],
@@ -1108,7 +1153,7 @@ def bab12():
     h2("12.4 Daftar periksa akhir sebelum dikumpulkan")
     daftar_periksa([
         ["Kotak petunjuk template, baris contoh, dan teks abu-abu sudah dihapus atau diganti", "Terpenuhi, seluruh isi diganti data kelompok"],
-        ["Tautan halaman sampul bisa dibuka dari akun lain", "Terpenuhi untuk GitHub (publik) dan Figma, aplikasi demo berjalan lokal dengan petunjuk README"],
+        ["Tautan pada Lampiran B bisa dibuka dari akun lain", "Terpenuhi untuk GitHub (publik) dan Figma, aplikasi demo berjalan lokal dengan petunjuk README"],
         ["Angka Ringkasan Eksekutif sama dengan angka bab terkait", "Terpenuhi (agreement, MAE, latensi, 12 pengujian, 18 langkah)"],
         ["ID fitur konsisten di Bab 5, 6, 7, dan 8", "Terpenuhi (F-01 sampai F-08, S-01 sampai S-07)"],
         ["Setiap gambar dan tabel bernomor, berjudul, dan dirujuk di teks", "Terpenuhi"],
@@ -1123,23 +1168,27 @@ def bab12():
 # DAFTAR PUSTAKA
 # ======================================================================
 def pustaka():
-    h1("Daftar Pustaka")
-    daftar = [
-        "Badan Pusat Statistik. Statistik Indonesia (berbagai tahun). Jakarta, BPS. Diakses sebagai rujukan profil wilayah.",
-        "Kementerian Pertanian Republik Indonesia. Peraturan Menteri Pertanian Nomor 40/Pert/Hk.060/3/2007 tentang Anjuran Pemupukan Berimbang N, P, dan K pada Padi, Jagung, dan Kedelai. Jakarta.",
-        "Lipenkova, J. (2025). The Art of AI Product Development: Delivering Business Value with Data, ML, and LLMs. Bahan perkuliahan PPKBP.",
-        "Nika, M., dan Granados, R. The AI Product Playbook. Bahan perkuliahan PPKBP.",
-        "Nika, M. The AI Product Development Lifecycle (AIPDL). Bahan Panduan Projek PPKBP.",
-        "Pusat Penelitian dan Pengembangan Tanah dan Agroklimat (Balittanah). Kaidah interpretasi kesuburan tanah dan publikasi rekomendasi pemupukan spesifik lokasi. Bogor.",
-        "Tim CAPS-32 Ilmu Komputer IPB. SAFRONS, Smart Agriculture and Fertilizer Recommendation System. https://safrons.vercel.app/. Diaudit pada LKP-P1.",
+    judul_depan("Daftar Pustaka")
+    pustaka_daftar = [
+        [("Badan Pusat Statistik. 2024. ", False), ("Statistik Indonesia 2024", True), (". Jakarta: Badan Pusat Statistik.", False)],
+        [("Kementerian Pertanian Republik Indonesia. 2007. ", False), ("Peraturan Menteri Pertanian Nomor 40/Pert/Hk.060/3/2007 tentang Anjuran Pemupukan Berimbang N, P, dan K pada Padi, Jagung, dan Kedelai", True), (". Jakarta: Kementerian Pertanian Republik Indonesia.", False)],
+        [("Lipenkova, Janna. 2025. ", False), ("The Art of AI Product Development: Delivering Business Value with Data, ML, and LLMs", True), (". Bahan ajar Perancangan Produk Kecerdasan Buatan untuk Pertanian, IPB University.", False)],
+        [("Nika, Marcin dan Romain Granados. t.t. ", False), ("The AI Product Playbook", True), (". Bahan ajar Perancangan Produk Kecerdasan Buatan untuk Pertanian, IPB University.", False)],
+        [("Nika, Marcin. t.t. ", False), ("The AI Product Development Lifecycle (AIPDL)", True), (". Bahan Panduan Projek PPKBP, IPB University.", False)],
+        [("Pusat Penelitian dan Pengembangan Tanah dan Agroklimat (Balittanah). t.t. ", False), ("Kaidah Interpretasi Kesuburan Tanah dan Rekomendasi Pemupukan Spesifik Lokasi", True), (". Bogor: Balai Penelitian Tanah.", False)],
+        [("Tim CAPS-32 Ilmu Komputer IPB. 2025. ", False), ("SAFRONS: Smart Agriculture and Fertilizer Recommendation System", True), (". https://safrons.vercel.app. Diakses 18 Agustus 2026.", False)],
     ]
-    for i, d in enumerate(daftar, 1):
+    for entri in pustaka_daftar:
         par = doc.add_paragraph()
-        par.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-        par.paragraph_format.line_spacing = 1.4
-        run = par.add_run(f"{i}. {d}")
-        run.font.size = Pt(12)
-    pecah_halaman()
+        par.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        par.paragraph_format.line_spacing = 1.15
+        par.paragraph_format.space_after = Pt(10)
+        par.paragraph_format.left_indent = Cm(1.25)
+        par.paragraph_format.first_line_indent = Cm(-1.25)
+        for teks, miring in entri:
+            run = par.add_run(teks)
+            run.font.size = Pt(11)
+            run.italic = miring
 
 
 # ======================================================================
@@ -1155,8 +1204,9 @@ def lampiran():
     tabel(None, ["Item", "Tautan"], [
         ["Repositori GitHub", TAUTAN["github"]],
         ["Repositori PoC (LKP-P6)", TAUTAN["github_poc"]],
-        ["Figma (wireframe)", TAUTAN["figma"]],
-        ["Desain hi-fi SVG dan panduan", "docs/desain-figma/ pada repositori, berisi FIGMA_GUIDE.md"],
+        ["Desain Figma (high fidelity)", TAUTAN["figma"]],
+        ["Video demo", TAUTAN["video"]],
+        ["Panduan desain dan berkas SVG", "docs/desain-figma/ pada repositori, berisi FIGMA_GUIDE.md"],
         ["Aplikasi demo", TAUTAN["app"]],
     ], lebar=[4.6, 11.4], ukuran=10)
 
@@ -1213,6 +1263,8 @@ def lampiran():
 def bangun():
     sampul()
     daftar_isi()
+    daftar_gambar()
+    daftar_tabel()
     ringkasan()
     bab1()
     bab2()
