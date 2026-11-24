@@ -1,0 +1,39 @@
+[OK] splash tampil 
+[OK] galat consent tanpa centang 
+[OK] beranda keadaan kosong 
+[OK] lahan keadaan kosong 
+[OK] layar pilih sumber lahan 
+[OK] peta zona termuat 
+[OK] lahan dari peta terdaftar 
+[OK] form uji tanah menolak pH 9,4 
+[OK] lahan dari uji tanah terdaftar 
+[OK] form rekomendasi terisi 
+[OK] hasil rekomendasi tampil (alur 3 ketukan dari beranda) 
+[OK] paket optimal mengubah kebutuhan dan biaya 
+[OK] kirim ke penyuluh 
+[OK] riwayat tersimpan 
+[OK] verifikasi penyuluh disetujui (keluar dari daftar menunggu) 
+[OK] profil menampilkan metrik model nyata 
+[OK] keadaan luar sebaran menyembunyikan angka 
+[OK] hasil jagung Keyakinan 89% (Yakin)
+
+=== RINGKASAN PERJALANAN ===
+OK splash tampil 
+OK galat consent tanpa centang 
+OK beranda keadaan kosong 
+OK lahan keadaan kosong 
+OK layar pilih sumber lahan 
+OK peta zona termuat 
+OK lahan dari peta terdaftar 
+OK form uji tanah menolak pH 9,4 
+OK lahan dari uji tanah terdaftar 
+OK form rekomendasi terisi 
+OK hasil rekomendasi tampil (alur 3 ketukan dari beranda) 
+OK paket optimal mengubah kebutuhan dan biaya 
+OK kirim ke penyuluh 
+OK riwayat tersimpan 
+OK verifikasi penyuluh disetujui (keluar dari daftar menunggu) 
+OK profil menampilkan metrik model nyata 
+OK keadaan luar sebaran menyembunyikan angka 
+OK hasil jagung Keyakinan 89% (Yakin)
+Tanpa galat konsol.

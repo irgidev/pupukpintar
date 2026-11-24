@@ -1,0 +1,61 @@
+{
+  "n_data": 6000,
+  "seed": 42,
+  "model": "RandomForestRegressor(n_estimators=300, min_samples_leaf=3)",
+  "cv_waktu_detik": 3.2,
+  "cv": {
+    "agreement_persen": 94.7,
+    "agreement_per_hara": {
+      "Dosis_N": 100.0,
+      "Dosis_P": 98.6,
+      "Dosis_K": 95.8
+    },
+    "r2": {
+      "Dosis_N": 0.989,
+      "Dosis_P": 0.991,
+      "Dosis_K": 0.942
+    },
+    "mae_kg": {
+      "Dosis_N": 3.7,
+      "Dosis_P": 2.5,
+      "Dosis_K": 2.1
+    }
+  },
+  "holdout": {
+    "n_uji": 1200,
+    "agreement_persen": 95.2,
+    "agreement_per_hara": {
+      "Dosis_N": 100.0,
+      "Dosis_P": 98.2,
+      "Dosis_K": 96.5
+    },
+    "r2": {
+      "Dosis_N": 0.99,
+      "Dosis_P": 0.991,
+      "Dosis_K": 0.943
+    },
+    "mae_kg": {
+      "Dosis_N": 3.6,
+      "Dosis_P": 2.4,
+      "Dosis_K": 2.1
+    }
+  },
+  "latensi_ms": {
+    "mean": 55.4,
+    "p95": 63.8
+  },
+  "feature_importance": {
+    "Komoditas_Padi": 0.5881,
+    "Komoditas_Jagung": 0.1724,
+    "N_persen": 0.1502,
+    "Target_Hasil": 0.0316,
+    "P_ppm": 0.0237,
+    "pH": 0.0169,
+    "K_me100g": 0.0092,
+    "Tekstur_Lempung": 0.0025,
+    "Musim_Kemarau": 0.0017,
+    "Tekstur_Liat": 0.0017,
+    "Musim_Hujan": 0.0017,
+    "Tekstur_Lempung Liat": 0.0002
+  }
+}

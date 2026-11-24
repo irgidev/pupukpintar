@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PupukPintar, Rekomendasi Dosis Pupuk per Lahan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<div class="bingkai" id="bingkai">
+
+  <!-- ============ STATUS BAR ATAS ============ -->
+  <div class="batang-atas">
+    <div class="merek-kecil">
+      <svg viewBox="0 0 24 24" class="ikon" aria-hidden="true"><path d="M12 3c-4 3-6.5 6-6.5 9.5A6.5 6.5 0 0 0 12 19a6.5 6.5 0 0 0 6.5-6.5C18.5 9 16 6 12 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 19v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>PupukPintar</span>
+    </div>
+    <div id="status-jaringan" class="jaringan jaringan-ok" role="status">Online</div>
+  </div>
+
+  <main id="layar" class="layar">
+
+    <!-- ============ SPLASH / ONBOARDING ============ -->
+    <section class="tampilan" id="v-splash" hidden>
+      <div class="splash-puncak">
+        <div class="logo-besar" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="var(--hijau-700)"/><path d="M24 10c-6 4.5-9.8 9-9.8 14.3A9.8 9.8 0 0 0 24 34.2a9.8 9.8 0 0 0 9.8-9.9C33.8 19 30 14.5 24 10Z" fill="none" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/><path d="M24 34V24" stroke="#F2C14E" stroke-width="2.6" stroke-linecap="round"/></svg>
+        </div>
+        <h1 class="judul-splash">PupukPintar</h1>
+        <p class="tagline-splash">Rekomendasi dosis pupuk N-P-K presisi untuk lahan Anda, bukan lahan tetangga.</p>
+      </div>
+
+      <div class="kartu kartu-persetujuan">
+        <h2>Persetujuan Data</h2>
+        <p>Data lahan Anda dipakai untuk rekomendasi pribadi dan perbaikan model. Identitas disamarkan dan bisa dihapus kapan saja dari halaman Profil.</p>
+        <label class="baris-centang">
+          <input type="checkbox" id="cek-setuju">
+          <span>Saya setuju data saya dipakai sebagaimana dijelaskan</span>
+        </label>
+        <p id="galat-setuju" class="pesan-galat" hidden>Centang persetujuan terlebih dahulu.</p>
+      </div>
+
+      <div class="tumpukan-tombol">
+        <button class="tombol utama" id="tombol-masuk">Masuk</button>
+        <button class="tombol garis" id="tombol-daftar">Daftar</button>
+      </div>
+      <p class="catatan-kecil">Butuh bantuan? Hubungi penyuluh di poktan Anda.</p>
+    </section>
+
+    <!-- ============ BERANDA ============ -->
+    <section class="tampilan" id="v-beranda" hidden>
+      <h1 class="judul-layar">Beranda</h1>
+      <div class="kartu kartu-musim">
+        <div>
+          <p class="label-kecil">MUSIM TANAM</p>
+          <p id="beranda-musim" class="isi-musim">Musim hujan, puncak Oktober sampai Maret</p>
+        </div>
+        <svg viewBox="0 0 24 24" class="ikon besar" aria-hidden="true"><path d="M4 15a8 8 0 1 1 16 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 15V4m0 0-3 3m3-3 3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+
+      <div id="beranda-lahan" class="kartu kartu-lahan-ringkas"><!-- diisi app.js --></div>
+
+      <button class="tombol utama lebar" data-buka="rekomendasi">
+        <svg viewBox="0 0 24 24" class="ikon" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        Minta Rekomendasi Dosis
+      </button>
+
+      <div id="beranda-terbaru" class="blok-terbaru"><!-- diisi app.js --></div>
+    </section>
+
+    <!-- ============ LAHAN SAYA ============ -->
+    <section class="tampilan" id="v-lahan" hidden>
+      <div class="baris-judul">
+        <h1 class="judul-layar">Lahan Saya</h1>
+        <button class="tombol kecil" data-buka="tambah-lahan">
+          <svg viewBox="0 0 24 24" class="ikon" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+          Tambah
+        </button>
+      </div>
+      <div id="daftar-lahan" class="daftar"><!-- diisi app.js --></div>
+    </section>
+
+    <!-- ============ TAMBAH LAHAN (PILIH CARA) ============ -->
+    <section class="tampilan" id="v-tambah-lahan" hidden>
+      <button class="tombol-kembali" data-buka="lahan" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" class="ikon" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <h1 class="judul-layar">Tambah Lahan</h1>
+      <p class="subjudul-layar">Pilih cara mengenalkan kondisi lahan Anda.</p>
+
+      <button class="kartu pilihan-sumber" data-buka="peta">
+        <svg viewBox="0 0 24 24" class="ikon besar" aria-hidden="true"><path d="M9 4 4 6v14l5-2 6 2 5-2V4l-5 2-6-2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 4v14m6-12v14" stroke="currentColor" stroke-width="2"/></svg>
+        <span>
+          <strong>Pilih di peta hara</strong>
+          Nilai pH, N, P, K diambil otomatis dari zona peta wilayah Bogor.
+        </span>
+      </button>
+
+      <button class="kartu pilihan-sumber" data-buka="uji-tanah">
+        <svg viewBox="0 0 24 24" class="ikon besar" aria-hidden="true"><path d="M5 4h9l5 5v11a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 13h6m-6 4h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span>
+          <strong>Masukkan hasil uji tanah</strong>
+          Untuk Anda yang punya angka hasil uji tanah sendiri.
+        </span>
+      </button>
+    </section>
+
+    <!-- ============ PETA ZONA ============ -->
+    <section class="tampilan" id="v-peta" hidden>
+      <button class="tombol-kembali" data-buka="tambah-lahan" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" class="ikon" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <h1 class="judul-layar">Peta Hara Wilayah</h1>
+      <p class="subjudul-layar">Ketuk salah satu zona untuk melihat kondisi haranya.</p>
+      <div id="peta-wadah" class="peta-wadah">
+        <p class="keadaan-muat" id="peta-muat">Memuat peta…</p>
+        <p class="keadaan-galat" id="peta-galat" hidden>Peta gagal dimuat. <button class="tautan" id="peta-coba-lagi">Coba lagi</button></p>
+        <svg id="peta-svg" viewBox="0 0 380 296" hidden aria-label="Peta zona hara wilayah Bogor"></svg>
+      </div>
+      <div id="peta-detail" class="kartu" hidden><!-- detail zona terpilih --></div>
+    </section>
+
+    <!-- ============ FORM UJI TANAH ============ -->
+    <section class="tampilan" id="v-uji-tanah" hidden>
+      <button class="tombol-kembali" data-buka="tambah-lahan" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" class="ikon" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <h1 class="judul-layar">Hasil Uji Tanah</h1>
+      <p class="subjudul-layar">Salin angka dari hasil uji tanah laboratorium Anda.</p>
+      <form id="form-uji-tanah" novalidate>
+        <div class="medan">
+          <label for="ut-nama">Nama lahan</label>
+          <input id="ut-nama" type="text" placeholder="contoh, Sawah belakang" required>
+        </div>
+        <div class="dua-kolom">
+          <div class="medan">
+            <label for="ut-ph">pH tanah</label>
+            <input id="ut-ph" type="number" step="0.1" min="3" max="9" placeholder="5,8" required>
+          </div>
+          <div class="medan">
+            <label for="ut-n">N (%)</label>
+            <input id="ut-n" type="number" step="0.01" min="0.01" max="2" placeholder="0,35" required>
+          </div>
+        </div>
+        <div class="dua-kolom">
+          <div class="medan">
+            <label for="ut-p">P (ppm)</label>
+            <input id="ut-p" type="number" step="0.1" min="1" max="200" placeholder="8,0" required>
+          </div>
+          <div class="medan">
+            <label for="ut-k">K (me/100g)</label>
+            <input id="ut-k" type="number" step="0.01" min="0.01" max="2.5" placeholder="0,18" required>
+          </div>
+        </div>
+        <div class="dua-kolom">
+          <div class="medan">
+            <label for="ut-tekstur">Tekstur tanah</label>
+            <select id="ut-tekstur">
+              <option>Lempung</option>
+              <option>Lempung Liat</option>
+              <option>Liat</option>
+            </select>
+          </div>
+          <div class="medan">
+            <label for="ut-luas">Luas (ha)</label>
+            <input id="ut-luas" type="number" step="0.05" min="0.05" max="10" placeholder="0,75" required>
+          </div>
+        </div>
+        <p id="galat-uji-tanah" class="pesan-galat" hidden></p>
+        <button type="submit" class="tombol utama lebar">Simpan Lahan</button>
+      </form>
+    </section>
+
+    <!-- ============ FORM REKOMENDASI ============ -->
+    <section class="tampilan" id="v-rekomendasi" hidden>
+      <h1 class="judul-layar">Rekomendasi Dosis</h1>
+      <p class="subjudul-layar">Pilih lahan dan kebutuhan tanam Anda.</p>
+
+      <div class="kartu">
+        <p class="label-kecil">PETAK LAHAN</p>
+        <div id="pilih-lahan" class="baris-chip"><!-- chip lahan --></div>
+        <p class="ringkasan-hara" id="ringkasan-hara"></p>
+      </div>
+
+      <div class="kartu">
+        <p class="label-kecil">KOMODITAS</p>
+        <div class="tersegmentasi" role="radiogroup" aria-label="Komoditas">
+          <button type="button" class="segmen aktif" data-komoditas="Padi" aria-pressed="true">Padi</button>
+          <button type="button" class="segmen" data-komoditas="Jagung" aria-pressed="false">Jagung</button>
+        </div>
+        <div class="dua-kolom">
+          <div class="medan">
+            <label for="rk-target">Target hasil (ton/ha)</label>
+            <input id="rk-target" type="number" step="0.1" min="3" max="13" value="6">
+          </div>
+          <div class="medan">
+            <label for="rk-luas">Luas petak (ha)</label>
+            <input id="rk-luas" type="number" step="0.05" min="0.05" max="10" value="0.75">
+          </div>
+        </div>
+        <div class="medan">
+          <label for="rk-musim">Musim tanam</label>
+          <select id="rk-musim">
+            <option value="Hujan">Hujan (Oktober sampai Maret)</option>
+            <option value="Kemarau">Kemarau (April sampai September)</option>
+          </select>
+        </div>
+      </div>
+
+      <p id="galat-rekomendasi" class="pesan-galat" hidden></p>
+      <button class="tombol utama lebar" id="tombol-hitung">Hitung Rekomendasi</button>
+      <p class="catatan-kecil tengah" id="catatan-hitung">Hasil tampil dalam hitungan detik. Keluaran dikunci pada rentang aman rekomendasi resmi.</p>
+      <div class="keadaan-muat kartu" id="hitung-muat" hidden>
+        <span class="putar" aria-hidden="true"></span> Model sedang menghitung…
+      </div>
+    </section>
+
+    <!-- ============ HASIL ============ -->
+    <section class="tampilan" id="v-hasil" hidden>
+      <div class="baris-judul">
+        <button class="tombol-kembali" data-buka="rekomendasi" aria-label="Kembali">
+          <svg viewBox="0 0 24 24" class="ikon" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <h1 class="judul-layar">Hasil Rekomendasi</h1>
+        <span id="badge-keyakinan" class="badge-keyakinan"></span>
+      </div>
+      <div id="isi-hasil"><!-- diisi app.js --></div>
+    </section>
+
+    <!-- ============ RIWAYAT ============ -->
+    <section class="tampilan" id="v-riwayat" hidden>
+      <h1 class="judul-layar">Riwayat Rekomendasi</h1>
+      <p class="subjudul-layar">Tersimpan di perangkat Anda, per petak dan per musim.</p>
+      <div id="daftar-riwayat" class="daftar"><!-- diisi app.js --></div>
+    </section>
+
+    <!-- ============ PAPAN PENYULUHAN ============ -->
+    <section class="tampilan" id="v-penyuluhan" hidden>
+      <h1 class="judul-layar">Papan Penyuluhan</h1>
+
+      <div class="kartu">
+        <p class="label-kecil">TIPS PEMUPUKAN</p>
+        <details class="tip">
+          <summary>Pemupukan urea sebaiknya dibagi dua tahap pada musim hujan</summary>
+          <p>Nitrogen mudah tercuci air hujan. Berikan sekitar setengah dosis urea saat tanam, sisanya 3 sampai 4 minggu kemudian.</p>
+        </details>
+        <details class="tip">
+          <summary>Tanah masam membuat pupuk fosfor sia-sia</summary>
+          <p>Bagi pH di bawah 5,5 sebagian besar fosfor terikat aluminium dan besi. Pengapuran lebih dahulu membuat pupuk P bekerja, sesuai anjuran interpretasi kesuburan tanah Balittanah.</p>
+        </details>
+        <details class="tip">
+          <summary>Kalium menjaga kualitas butir dan ketahanan tanaman</summary>
+          <p>Stok kalium yang rendah membuat tanaman mudah rebah dan butir kurang padat. Cek status K lahan Anda sebelum menekan dosis KCl.</p>
+        </details>
+      </div>
+
+      <div class="kartu">
+        <p class="label-kecil">VERIFIKASI PENYULUH</p>
+        <div id="daftar-verifikasi" class="daftar"><!-- permintaan verifikasi --></div>
+      </div>
+
+      <div class="kartu">
+        <p class="label-kecil">KONTAK PENYULUH</p>
+        <p class="teks-abu">Daftar kontak penyuluh diisi bersama poktan saat pilot. Selama itu, sampaikan hasil rekomendasi Anda langsung ke penyuluh pembina.</p>
+      </div>
+    </section>
+
+    <!-- ============ PROFIL ============ -->
+    <section class="tampilan" id="v-profil" hidden>
+      <h1 class="judul-layar">Profil dan Pengaturan</h1>
+
+      <div class="kartu">
+        <p class="label-kecil">AKUN</p>
+        <div class="medan">
+          <label for="pf-nama">Nama</label>
+          <input id="pf-nama" type="text" placeholder="Nama Anda">
+        </div>
+      </div>
+
+      <div class="kartu">
+        <p class="label-kecil">PERSETUJUAN DATA</p>
+        <label class="baris-centang">
+          <input type="checkbox" id="pf-optout">
+          <span>Bolehkan data lahan saya dipakai memperbaiki model</span>
+        </label>
+        <button class="tombol bahaya lebar" id="pf-hapus">
+          <svg viewBox="0 0 24 24" class="ikon" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-8 0 1 13h8l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          Hapus semua data saya
+        </button>
+        <p class="teks-abu">Penghapusan membersihkan lahan, riwayat, dan verifikasi di perangkat ini.</p>
+      </div>
+
+      <div class="kartu">
+        <p class="label-kecil">TENTANG MODEL</p>
+        <div id="profil-model" class="teks-abu">Memuat metrik model…</div>
+        <p class="teks-abu">Data latih adalah proxy hasil ekstraksi tabel rekomendasi resmi (Permentan No. 40/2007 dan kaidah Balittanah), bukan hasil uji laboratorium. Validasi lapangan berjalan bertahap bersama poktan.</p>
+      </div>
+
+      <p class="catatan-kecil tengah">PupukPintar versi 1.0, proyek akhir PPKBP Kelompok 14</p>
+    </section>
+
+  </main>
+
+  <!-- ============ NAVIGASI BAWAH ============ -->
+  <nav class="nav-bawah" aria-label="Menu utama" id="nav-bawah">
+    <button data-buka="beranda" class="nav-item aktif">
+      <svg viewBox="0 0 24 24" class="ikon" aria-hidden="true"><path d="m4 11 8-7 8 7v8a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1v-8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      <span>Beranda</span>
+    </button>
+    <button data-buka="lahan" class="nav-item">
+      <svg viewBox="0 0 24 24" class="ikon" aria-hidden="true"><path d="M9 4 4 6v14l5-2 6 2 5-2V4l-5 2-6-2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 4v14m6-12v14" stroke="currentColor" stroke-width="2"/></svg>
+      <span>Lahan</span>
+    </button>
+    <button data-buka="rekomendasi" class="nav-item">
+      <svg viewBox="0 0 24 24" class="ikon" aria-hidden="true"><path d="M12 3c-4 3-6.5 6-6.5 9.5A6.5 6.5 0 0 0 12 19a6.5 6.5 0 0 0 6.5-6.5C18.5 9 16 6 12 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 19v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Rekomendasi</span>
+    </button>
+    <button data-buka="penyuluhan" class="nav-item">
+      <svg viewBox="0 0 24 24" class="ikon" aria-hidden="true"><path d="M5 5a2 2 0 0 1 2-2h12v16H7a2 2 0 0 0-2 2V5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 7h6M9 11h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Penyuluhan</span>
+    </button>
+    <button data-buka="profil" class="nav-item">
+      <svg viewBox="0 0 24 24" class="ikon" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 21c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Profil</span>
+    </button>
+  </nav>
+
+  <!-- ============ TOAST ============ -->
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
