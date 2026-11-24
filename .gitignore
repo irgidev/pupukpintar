@@ -5,3 +5,7 @@ __pycache__/
 node_modules/
 ~$*
 *.tmp
+laporan/render/
+presentasi/render/
+laporan/pembangkit/halaman_toi.json
+laporan/cek_*.png

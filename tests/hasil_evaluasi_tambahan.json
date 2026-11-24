@@ -1,0 +1,82 @@
+{
+  "baseline_mean": {
+    "agreement_persen": 49.2,
+    "mae_kg": {
+      "Dosis_N": 24.0,
+      "Dosis_P": 10.8,
+      "Dosis_K": 5.7
+    }
+  },
+  "baseline_linear": {
+    "agreement_persen": 89.5,
+    "mae_kg": {
+      "Dosis_N": 11.6,
+      "Dosis_P": 6.4,
+      "Dosis_K": 2.1
+    }
+  },
+  "model_utama_rf": {
+    "agreement_persen": 95.2,
+    "mae_kg": {
+      "Dosis_N": 3.6,
+      "Dosis_P": 2.4,
+      "Dosis_K": 2.1
+    }
+  },
+  "kalibrasi": [
+    {
+      "kelompok": ">= 0,85 (yakin)",
+      "jumlah": 1186,
+      "proporsi_persen": 98.8,
+      "agreement_persen": 95.8,
+      "rata_keyakinan": 0.93
+    },
+    {
+      "kelompok": "0,70 sampai 0,85 (cukup yakin)",
+      "jumlah": 14,
+      "proporsi_persen": 1.2,
+      "agreement_persen": 42.9,
+      "rata_keyakinan": 0.83
+    }
+  ],
+  "contoh": [
+    {
+      "input": {
+        "pH": 5.4,
+        "n_persen": 0.35,
+        "p_ppm": 7.0,
+        "k_me100g": 0.18,
+        "tekstur": "Lempung",
+        "Komoditas": "Padi",
+        "Target_Hasil": 6.0,
+        "Musim": "Hujan"
+      },
+      "dosis_model_kg_ha": [
+        221,
+        91,
+        52
+      ],
+      "dosis_pakar_kg_ha": null,
+      "keyakinan": 0.85
+    },
+    {
+      "input": {
+        "pH": 6.8,
+        "n_persen": 0.7,
+        "p_ppm": 45.0,
+        "k_me100g": 0.6,
+        "tekstur": "Lempung Liat",
+        "Komoditas": "Jagung",
+        "Target_Hasil": 9.0,
+        "Musim": "Kemarau"
+      },
+      "dosis_model_kg_ha": [
+        347,
+        162,
+        80
+      ],
+      "dosis_pakar_kg_ha": null,
+      "keyakinan": 0.97
+    }
+  ]
+}
