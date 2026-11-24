@@ -287,7 +287,7 @@ def slide3():
     x_list = [0.55, 3.72, 6.89, 10.06]
     w = 2.72
     isi_kartu = [
-        ("INPUT", "Kondisi lahan: pH, N, P, K,\ntekstur, komoditas, target\nhasil, luas, musim\n(gambar petak di peta atau uji tanah)"),
+        ("INPUT", "Kondisi lahan: pH, N, P, K,\ntekstur, komoditas, target\nhasil, luas, musim\n(pilih unit di peta atau uji tanah)"),
         ("INTELLIGENCE", "Random Forest Regressor\n300 pohon + keyakinan\nantarpohon + guardrail rentang\nPermentan + aturan Balittanah"),
         ("UX", "Kartu dosis kg/ha dan kg\nper petak, badge keyakinan,\nestimasi biaya, paket modal,\npenjelasan sederhana"),
         ("VALUE", "Dosis tepat per lahan,\npotensi hemat biaya pupuk,\nkeputusan aman lewat\nverifikasi penyuluh"),
@@ -336,7 +336,7 @@ def slide4():
     bing.shadow.inherit = False
 
     langkah = [
-        ("1", "Pengguna melakukan", "Gambar batas petak di peta (luas terukur otomatis) atau masukkan hasil uji tanah, lalu pilih komoditas dan target hasil"),
+        ("1", "Pengguna melakukan", "Cari daerahnya lewat pencarian, pilih unit lahannya di peta (peta membesarkan unit), atau masukkan hasil uji tanah, lalu pilih komoditas dan target hasil"),
         ("2", "AI memproses", "Random Forest memprediksi dosis N-P-K, menghitung keyakinan dari sebaran antarpohon, guardrail mengunci rentang aman (p95 API 87 ms)"),
         ("3", "Pengguna menerima", "Dosis kg/ha dan kg per petak, estimasi biaya, tiga paket modal, keyakinan 81%, penjelasan, dan disclaimer"),
     ]

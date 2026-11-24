@@ -80,46 +80,39 @@ def jalankan():
         hal.wait_for_selector("#peta-svg .peta-area", timeout=20000)
         cek_luapan(hal, "peta")
         hal.wait_for_timeout(300)
-        catat("peta vektor 191 area SAFRONS termuat (mode gambar bawaan)", "OK")
+        assert "unit" in hal.inner_text("#hitung-unit").lower()
+        catat("peta vektor 191 area SAFRONS termuat, daftar unit tampil", "OK")
 
-        # ==== MODE GAMBAR: petak ~0,5 ha dekat titik (-6,5995, 106,8002) ====
-        hal.evaluate("window.__ppPeta.aturView(-6.59955, 106.80023, 0.012)")
+        # ==== PILIH UNIT VIA PENCARIAN NAMA ====
+        hal.fill("#cari-unit", "Bogor")
         hal.wait_for_timeout(300)
-        daftar_titik = hal.evaluate(
-            "(() => { const cand = [[-6.6, 106.8], [-6.5991, 106.8], [-6.5991, 106.80046], [-6.6, 106.80046]];"
-            " return cand.map(ll => window.__ppPeta.latlngKeKlien(ll[0], ll[1])); })()"
-        )
-        for t in daftar_titik:
-            hal.mouse.click(t["x"], t["y"])
-        info = hal.inner_text("#info-gambar")
-        assert "Luas gambaran" in info and "ha" in info, info
-        hal.screenshot(path=os.path.join(KELUAR, "04-peta-hara.png"))
-        catat("petak digambar 4 titik, luas terukur otomatis: " + info, "OK")
-
-        hal.click("#selesai-gambar")
+        hal.click("#daftar-unit .baris-unit >> nth=0")
         hal.wait_for_selector("#area-pakai", timeout=8000)
-        kartu = hal.inner_text("#peta-detail")
-        assert "Luas terukur" in kartu and "unit peta SAFRONS" in kartu, kartu[:150]
-        hal.fill("#area-nama", "Sawah Gambar Uji")
-        hal.screenshot(path=os.path.join(KELUAR, "05-peta-hara-detail.png"))
+        kartu = hal.inner_text("#peta-detail").upper()
+        assert "UNIT LAHAN TERPILIH" in kartu and "BOGOR" in kartu, kartu[:150]
+        tinggi = hal.evaluate("Number(document.querySelector('#peta-svg').getAttribute('viewBox').split(' ')[3])")
+        assert tinggi < 1.0, f"peta tidak membesarkan unit (viewBox h={tinggi})"
+        hal.fill("#area-nama", "Sawah Bogor Uji")
+        hal.screenshot(path=os.path.join(KELUAR, "04-peta-hara.png"))
+        catat("unit Bogor dipilih dari pencarian, peta membesarkan unit", "OK")
         hal.click("#area-pakai")
         hal.wait_for_selector("#v-lahan:not([hidden])")
-        assert "Sawah Gambar Uji" in hal.inner_text("#daftar-lahan")
-        assert "dari gambar peta" in hal.inner_text("#daftar-lahan")
-        catat("lahan tersimpan sesuai gambaran (luas dari geometri)", "OK")
+        assert "Sawah Bogor Uji" in hal.inner_text("#daftar-lahan")
+        assert "dari peta hara SAFRONS: Bogor" in hal.inner_text("#daftar-lahan")
+        catat("lahan tersimpan dari unit peta", "OK")
 
-        # ==== MODE PILIH UNIT: klik koordinat yang diketahui di area Bogor ====
+        # ==== PILIH UNIT VIA KETUKAN PETA ====
         hal.click(".baris-judul .tombol.kecil")
         hal.wait_for_selector("#v-tambah-lahan:not([hidden])")
         hal.click(".pilihan-sumber[data-buka='peta']")
         hal.wait_for_selector("#peta-svg .peta-area", timeout=20000)
-        hal.click("#mode-peta .segmen[data-mode='unit']")
         hal.wait_for_timeout(300)
         titik = hal.evaluate("window.__ppPeta.latlngKeKlien(-6.6, 106.8)")
         hal.mouse.click(titik["x"], titik["y"])
         hal.wait_for_selector("#area-pakai", timeout=8000)
-        assert "UNIT LAHAN SAFRONS" in hal.inner_text("#peta-detail").upper(), hal.inner_text("#peta-detail")[:120]
-        catat("mode unit: klik koordinat (-6,6, 106,8) memilih unit yang tepat", "OK")
+        kartu2 = hal.inner_text("#peta-detail").upper()
+        assert "BOGOR" in kartu2, kartu2[:150]
+        catat("ketukan peta pada koordinat (-6,6 106,8) memilih unit yang tepat", "OK")
         hal.click(".tombol-kembali[data-buka='tambah-lahan']")
 
         # ==== LANJUT: lahan kedua via uji tanah ====

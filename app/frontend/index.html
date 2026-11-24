@@ -116,16 +116,12 @@
       </button>
       <h1 class="judul-layar">Peta Hara Wilayah</h1>
       <p class="subjudul-layar">Gambar batas petak Anda di peta agar luas dan bentuknya persis, atau pilih unit lahan SAFRONS.</p>
-      <div class="tersegmentasi" id="mode-peta" role="radiogroup" aria-label="Cara memilih lahan">
-        <button type="button" class="segmen aktif" data-mode="gambar" aria-pressed="true">Gambar Lahan</button>
-        <button type="button" class="segmen" data-mode="unit" aria-pressed="false">Pilih Unit</button>
+      <div class="medan">
+        <label for="cari-unit">Cari nama daerah</label>
+        <input id="cari-unit" type="search" placeholder="contoh, Bogor, Cikeas, Nanggung" autocomplete="off">
       </div>
-      <div class="baris-alat" id="alat-gambar">
-        <span id="info-gambar" class="teks-abu">Ketuk peta untuk menandai sudut pertama lahan Anda.</span>
-        <button class="tombol kecil garis" id="urungkan-titik">Urungkan</button>
-        <button class="tombol kecil garis" id="bersihkan-titik">Bersihkan</button>
-        <button class="tombol kecil utama" id="selesai-gambar" disabled>Selesai</button>
-      </div>
+      <p class="label-kecil" style="margin-bottom:-6px">DAFTAR UNIT LAHAN <span id="hitung-unit"></span></p>
+      <div id="daftar-unit" class="daftar-unit" aria-label="Daftar unit lahan"></div>
       <div class="peta-wadah">
         <svg id="peta-svg" class="peta-svg mode-gambar" role="application" aria-label="Peta hara wilayah Bogor"></svg>
         <div class="peta-zum">
@@ -136,6 +132,13 @@
         <div class="peta-tooltip" id="peta-tooltip" hidden></div>
         <p class="keadaan-muat" id="peta-muat">Memuat peta&hellip;</p>
         <p class="keadaan-galat" id="peta-galat" hidden>Peta gagal dimuat. <button class="tautan" id="peta-coba-lagi">Coba lagi</button></p>
+      </div>
+      <div id="info-unit" class="info-unit" role="status">Ketuk peta atau pilih unit dari daftar. Arahkan kursor ke peta untuk melihat nama unit.</div>
+      <div class="legenda" aria-label="Legenda warna pH">
+        <span class="chip-legend" style="background:#E4B84C"></span> Masam (pH di bawah 5,0)
+        <span class="chip-legend" style="background:#E9CC7A"></span> Agak masam
+        <span class="chip-legend" style="background:#B9CF9E"></span> Setengah masam
+        <span class="chip-legend" style="background:#7FB58A"></span> Netral ke subur
       </div>
       <p class="catatan-kecil tengah">Kanvas vektor 191 area SAFRONS, bekerja penuh tanpa internet.</p>
       <div id="peta-detail" class="kartu" hidden><!-- detail area atau petak terpilih --></div>

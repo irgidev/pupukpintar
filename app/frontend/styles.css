@@ -232,7 +232,6 @@ html, body {
   cursor: crosshair;
 }
 .peta-svg.mode-unit { cursor: pointer; }
-.peta-svg.mode-gambar .peta-area { pointer-events: none; }
 .peta-area { cursor: pointer; }
 .peta-area:hover { filter: brightness(1.06); }
 .peta-kosong { cursor: not-allowed; }
@@ -267,14 +266,54 @@ html, body {
   z-index: 6;
   white-space: nowrap;
 }
-.baris-alat {
+.daftar-unit {
+  max-height: 148px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.baris-unit {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1.5px solid var(--garis);
+  background: #fff;
+  border-radius: 8px;
+  min-height: 44px;
+  padding: 8px 12px;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.baris-unit:hover { border-color: var(--hijau-500); }
+.baris-unit.aktif { border-color: var(--hijau-700); background: var(--hijau-100); }
+.baris-unit .nama-unit { font-weight: 700; color: var(--hijau-900); }
+.baris-unit .ket-unit { font-size: 12px; color: var(--abu); white-space: nowrap; }
+.info-unit {
+  background: var(--hijau-100);
+  color: var(--hijau-900);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.legenda {
   display: flex;
   align-items: center;
-  gap: 8px;
   flex-wrap: wrap;
+  gap: 6px 10px;
+  font-size: 12px;
+  color: var(--abu);
 }
-.baris-alat .tombol { min-height: 40px; padding: 8px 12px; font-size: 13.5px; }
-.baris-alat #info-gambar { flex: 1 1 100%; font-size: 13px; }
+.chip-legend {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border-radius: 4px;
+  border: 1px solid var(--garis);
+  vertical-align: -2px;
+}
 .peta-latar { fill: #EDF2EA; }
 .peta-kisi { stroke: #D8E0D4; stroke-width: 1; }
 .peta-zona { cursor: pointer; stroke: #fff; stroke-width: 2; }
