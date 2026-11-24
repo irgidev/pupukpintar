@@ -83,6 +83,22 @@ def jalankan():
         hal.screenshot(path=os.path.join(KELUAR, "04-peta-hara.png"))
         catat("peta hara SAFRONS termuat (191 area)", "OK")
 
+        # verifikasi ketepatan: klik titik peta (lat -6,6 lon 106,8) yang diketahui
+        # berada di area "Bogor" menurut uji titik-dalam-poligon
+        titik = hal.evaluate(
+            "(() => { const cp = window.__ppPeta.latLngToContainerPoint([-6.6, 106.8]);"
+            " const r = document.querySelector('#peta-leaflet').getBoundingClientRect();"
+            " return { x: r.left + cp.x, y: r.top + cp.y }; })()"
+        )
+        hal.mouse.click(titik["x"], titik["y"])
+        hal.wait_for_selector("#area-pakai", timeout=8000)
+        assert "AREA BOGOR" in hal.inner_text("#peta-detail").upper(), hal.inner_text("#peta-detail")[:120]
+        catat("klik titik peta memilih area yang tepat (Bogor)", "OK")
+        hal.click(".tombol-kembali[data-buka='tambah-lahan']")
+        hal.click(".pilihan-sumber[data-buka='peta']")
+        hal.wait_for_selector("#peta-leaflet .leaflet-overlay-pane path:not([d='M0 0'])", timeout=20000)
+        hal.wait_for_timeout(600)
+
         # ketuk poligon area berisi data yang benar-benar terlihat di peta
         hal.click("#peta-leaflet .leaflet-overlay-pane path:not([d='M0 0']):not([fill='#CDD4CC']) >> nth=0")
         hal.wait_for_selector("#area-pakai", timeout=8000)

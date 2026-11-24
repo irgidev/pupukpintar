@@ -4,6 +4,7 @@
 [OK] lahan keadaan kosong 
 [OK] layar pilih sumber lahan 
 [OK] peta hara SAFRONS termuat (191 area) 
+[OK] klik titik peta memilih area yang tepat (Bogor) 
 [OK] lahan dari peta hara SAFRONS terdaftar 
 [OK] form uji tanah menolak pH 9,4 
 [OK] lahan dari uji tanah terdaftar 
@@ -24,6 +25,7 @@ OK beranda keadaan kosong
 OK lahan keadaan kosong 
 OK layar pilih sumber lahan 
 OK peta hara SAFRONS termuat (191 area) 
+OK klik titik peta memilih area yang tepat (Bogor) 
 OK lahan dari peta hara SAFRONS terdaftar 
 OK form uji tanah menolak pH 9,4 
 OK lahan dari uji tanah terdaftar 

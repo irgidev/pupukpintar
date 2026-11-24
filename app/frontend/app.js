@@ -238,7 +238,8 @@ $("#daftar-lahan").addEventListener("click", (e) => {
 /* ---------- peta hara SAFRONS (Leaflet) ---------- */
 let petaL = null;          // objek L.map
 let lapisanArea = null;    // L.geoJSON
-let areaDipilih = null;    // layer yang sedang dipilih
+let dataPeta = null;       // fitur peta untuk uji titik-dalam-poligon
+let lapisanSorot = null;   // highlight non-interaktif
 
 async function muatPeta() {
   $("#peta-galat").hidden = true;
@@ -264,10 +265,10 @@ function warnaArea(pH) {
   return "#7FB58A";                // netral ke subur
 }
 
-function siapkanPeta(dataPeta) {
+function siapkanPeta(dataPetaSumber) {
   const wadah = $("#peta-leaflet");
   if (!petaL) {
-    petaL = L.map(wadah, { attributionControl: true, zoomControl: true, tap: true });
+    petaL = L.map(wadah, { attributionControl: true, zoomControl: true });
     petaL.setView([-6.55, 106.78], 10);
     // basemap daring; bila luring, poligon tetap tampil di atas latar peta polos
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -277,7 +278,7 @@ function siapkanPeta(dataPeta) {
   }
   setTimeout(() => petaL.invalidateSize(), 60);
 
-  lapisanArea = L.geoJSON(dataPeta, {
+  lapisanArea = L.geoJSON(dataPetaSumber, {
     style: (fitur) => {
       const p = fitur.properties;
       if (p.nodata) return { color: "#9AA39C", weight: 1, fillOpacity: 0.25, fillColor: "#CDD4CC", dashArray: "3 3" };
@@ -286,21 +287,80 @@ function siapkanPeta(dataPeta) {
     onEachFeature: (fitur, layer) => {
       const p = fitur.properties;
       layer.bindTooltip(p.nodata ? p.nama + " (tanpa data)" : p.nama, { sticky: true, direction: "top" });
-      layer.on("click", () => pilihArea(p, layer));
+      layer.on("click", (ev) => {
+        if (p.nodata) {
+          toast("Area \"" + p.nama + "\" tidak punya data hara sehingga tidak bisa dipilih.", true);
+          return;
+        }
+        // keputusan berbasis titik ketuk, bukan poligon yang kebetulan tersentuh
+        const terpilih = cariAreaPadaTitik(ev.latlng.lat, ev.latlng.lng) || p;
+        pilihArea(terpilih);
+      });
     },
   }).addTo(petaL);
+  // klik pada celah antar poligon tetap dicek (peta melaporkan titik klik)
+  petaL.on("click", (ev) => {
+    const terpilih = cariAreaPadaTitik(ev.latlng.lat, ev.latlng.lng);
+    if (terpilih) pilihArea(terpilih);
+  });
   petaL.fitBounds(lapisanArea.getBounds(), { padding: [10, 10] });
+  dataPeta = dataPetaSumber;
+  window.__ppPeta = petaL; // hook pengujian: klik koordinat peta yang diketahui
 }
 
-function pilihArea(p, layer) {
+/* ---------- pemilihan area dari titik ketuk ---------- */
+function titikDalamRing(x, y, ring) {
+  let dalam = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
+    if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) dalam = !dalam;
+  }
+  return dalam;
+}
+
+function luasRing(ring) {
+  let total = 0;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    total += (ring[j][0] - ring[i][0]) * (ring[j][1] + ring[i][1]);
+  }
+  return Math.abs(total / 2);
+}
+
+function cariAreaPadaTitik(lat, lng) {
+  if (!dataPeta) return null;
+  let terbaik = null;
+  let luasTerbaik = Infinity;
+  for (const fitur of dataPeta.features) {
+    const p = fitur.properties;
+    if (p.nodata) continue;
+    const polys = fitur.geometry.type === "MultiPolygon" ? fitur.geometry.coordinates : [fitur.geometry.coordinates];
+    for (const poly of polys) {
+      if (!titikDalamRing(lng, lat, poly[0])) continue;
+      let diLubang = false;
+      for (let i = 1; i < poly.length; i++) {
+        if (titikDalamRing(lng, lat, poly[i])) { diLubang = true; break; }
+      }
+      if (diLubang) continue;
+      const luas = luasRing(poly[0]);
+      if (luas < luasTerbaik) { luasTerbaik = luas; terbaik = p; }
+      break;
+    }
+  }
+  return terbaik;
+}
+
+function pilihArea(p) {
   if (p.nodata) {
     toast("Area \"" + p.nama + "\" tidak punya data hara sehingga tidak bisa dipilih.", true);
     return;
   }
-  if (areaDipilih) areaDipilih.setStyle({ weight: 1.2, color: "#FFFFFF" });
-  areaDipilih = layer;
-  layer.setStyle({ weight: 3, color: "#143D2B" });
-  layer.bringToFront();
+  // highlight pada lapisan terpisah non-interaktif agar tidak menyita klik berikutnya
+  const fiturSorot = dataPeta.features.find(f => f.properties.id === p.id);
+  if (lapisanSorot) petaL.removeLayer(lapisanSorot);
+  lapisanSorot = L.geoJSON(
+    { type: "Feature", properties: {}, geometry: fiturSorot.geometry },
+    { interactive: false, style: { color: "#143D2B", weight: 3, fillOpacity: 0.18, fillColor: "#143D2B" } }
+  ).addTo(petaL);
 
   const w = $("#peta-detail");
   w.hidden = false;
