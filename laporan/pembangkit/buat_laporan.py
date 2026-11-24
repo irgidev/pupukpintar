@@ -52,7 +52,7 @@ TAUTAN = {
     "github": "https://github.com/irgidev/pupukpintar",
     "github_poc": "https://github.com/irgidev/pupukpintar-poc",
     "figma": "https://www.figma.com/design/rSkPUlILq9yMteqXRwDBHF/PupukPintar?node-id=0-1",
-    "app": "http://127.0.0.1:8000 (demo lokal, cara menjalankan ada di README repositori)",
+    "app": "https://pupukpintar.vercel.app (deployment Vercel; cara menjalankan versi lokal ada di README repositori)",
     "video": "https://drive.google.com/drive/folders/1hZzJHdhQZEa4-a4qC8jQDy1sYrweZVA1",
 }
 
@@ -262,15 +262,15 @@ def sampul():
         run.font.size = Pt(ukuran)
         run.bold = tebal
 
-    baris_sampul("LAPORAN PROYEK PPKBP", 14, True, 10)
+    baris_sampul("LAPORAN PROYEK PPKBP", 14, True, 14)
     baris_sampul("Ditunjukkan untuk memenuhi tugas MK. Perancangan Produk Kecerdasan Buatan untuk Pertanian (KEB1322)", 12, False, 18)
     baris_sampul("Disusun Oleh Kelompok 14 | K1", 14, True, 8)
     baris_sampul("Irgi Setiawan - M0405241018", 12, False, 2)
     baris_sampul("Syarif Abdullah Assagaf - M0405241033", 12, False, 2)
-    baris_sampul("Thogianna Anggitouli Metanoia Sinaga - M0405241077", 12, False, 20)
+    baris_sampul("Thogianna Anggitouli Metanoia Sinaga - M0405241077", 12, False, 36)
     par_logo = doc.add_paragraph()
     par_logo.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    par_logo.paragraph_format.space_after = Pt(20)
+    par_logo.paragraph_format.space_after = Pt(30)
     par_logo.add_run().add_picture(os.path.join(REPO, "..", "proyek_akhir", "Logo-IPB-baru1000.png"), width=Cm(4.5))
     baris_sampul("PROGRAM STUDI KECERDASAN BUATAN", 14, True, 8)
     baris_sampul("SEKOLAH SAINS DATA MATEMATIKA DAN INFORMATIKA", 14, True, 8)
@@ -784,7 +784,7 @@ def bab7():
         ["Server API", "Pustaka standar Python http.server", "Kontrak API identik dengan rencana FastAPI, tanpa dependensi biner yang diblokir kebijakan mesin (Bab 7.6)", "FastAPI dipertahankan sebagai rencana penyebaran produksi, migrasinya langsung karena kontrak sama"],
         ["Model AI", "Random Forest Regressor scikit-learn 1.8, diekspor joblib", "Lulus PoC dan holdout, feature importance membantu penjelasan, tidak butuh GPU", "Gradient Boosting (risiko overfit pada proxy, penjelasan lebih rumit), model deep learning (data terlalu kecil, tidak proporsional)"],
         ["Basis data", "localStorage pada versi demo", "Tanpa server basis data, data tetap di perangkat petani sesuai prinsip minimisasi", "PostgreSQL (rencana produksi saat fitur penyuluh daring), SQLite (alternatif lokal)"],
-        ["Hosting", "Lokal untuk demo, rencana VPS kecil", "Belum ada akun hosting tim, biaya dihitung di Bab 9", "Vercel gratis (cocok statis, tetapi model Python butuh runtime server)"],
+        ["Hosting", "Deployment ke Vercel pada subdomain pupukpintar.vercel.app; pengembangan harian tetap lokal", "Subdomain sudah ditetapkan sekarang agar tautan laporan dan presentasi konsisten saat deployment", "VPS kecil berbayar (dipakai bila butuh proses server persisten); Vercel gratis dipakai untuk demo daring"],
         ["Repositori", "GitHub", "Publik, berisi seluruh kode, pengujian, laporan, dan presentasi", "Tidak ada alternatif yang dibahas"],
     ], lebar=[2.2, 3.4, 4.4, 6.0], ukuran=9)
 
@@ -822,7 +822,7 @@ def bab7():
     ], lebar=[1.4, 7.0, 2.0, 5.6], ukuran=9.5)
     tabel(None, ["Repositori dan aplikasi", "Keterangan"], [
         ["Repositori", TAUTAN["github"] + " , struktur: app (backend dan frontend), poc, tests, docs, laporan, presentasi. README memuat cara menjalankan tiga langkah"],
-        ["Aplikasi berjalan", "Demo lokal http://127.0.0.1:8000, tanpa login, dijalankan dengan python server.py dari folder app/backend setelah train.py sekali dijalankan"],
+        ["Aplikasi berjalan", "https://pupukpintar.vercel.app, tanpa login. Versi lokal: jalankan python server.py dari folder app/backend setelah train.py sekali dijalankan"],
     ], lebar=[3.2, 12.8], ukuran=10)
 
     h2("7.6 Kendala teknis dan keputusan")
@@ -949,7 +949,7 @@ def bab9():
 
     h2("9.1 Asumsi biaya")
     tabel("Tabel 9.1 Parameter dan dasar asumsi", ["Parameter", "Simbol", "Nilai", "Dasar asumsi dan sumber"], [
-        ["Biaya server kecil", "S", "Rp 90.000 per bulan", "Asumsi harga VPS 1 CPU 1 GB dari penyedia lokal (nilai yang lazim di pasar Indonesia, ditetapkan sebagai asumsi tim karena belum ada akun hosting). Belum ada tagihan nyata karena demo berjalan lokal"],
+        ["Biaya server kecil", "S", "Rp 90.000 per bulan", "Asumsi harga VPS 1 CPU 1 GB dari penyedia lokal (nilai yang lazim di pasar Indonesia, ditetapkan sebagai asumsi tim). Alternatif gratis: Vercel Hobby untuk demo daring. Belum ada tagihan nyata karena demo berjalan lokal"],
         ["Kueri rekomendasi per petani per bulan musim tanam", "Q", "5", "Perkiraan dari pola pakai: 1 sampai 2 rekomendasi baru ditambah cek ulang sebelum beli pupuk (asumsi tim)"],
         ["Panjang musim tanam aktif", "M", "3 bulan", "Puncak musim hujan Oktober sampai Maret di Bogor (LKP-P4)"],
         ["Jumlah petani per poktan", "N", "25", "Ukuran poktan yang lazim (asumsi tim untuk pilot)"],

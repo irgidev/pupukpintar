@@ -215,8 +215,8 @@ def slide1():
 
     kartu(s, 0.9, 5.05, 7.3, 1.5, warna_isi=RGBColor(0x14, 0x2C, 0x50), garis=RGBColor(0x3A, 0x52, 0x7C), radius=0.1)
     kotak_teks(s, 1.12, 5.22, 1.6, 0.3, "COBA SENDIRI", ukuran=10.5, tebal=True, warna=KUNING)
-    kotak_teks(s, 1.12, 5.55, 6.9, 0.9,
-               "Aplikasi: http://127.0.0.1:8000 (jalankan python server.py sesuai README)\n"
+    kotak_teks(s, 1.12, 5.5, 6.9, 1.0,
+               "Aplikasi: https://pupukpintar.vercel.app\n"
                "GitHub: github.com/irgidev/pupukpintar\nFigma: figma.com/design/rSkPUlILq9yMteqXRwDBHF/PupukPintar\nVideo: drive.google.com/drive/folders/1hZzJHdhQZEa4-a4qC8jQDy1sYrweZVA1",
                ukuran=11, warna=PUTIH, baris=1.35)
     qr = s.shapes.add_picture(os.path.join(SINI, "..", "qr_repo.png"), Inches(9.05), Inches(4.98), height=Inches(1.62))
@@ -650,7 +650,7 @@ def slide10():
     kartu(s, 0.9, 5.82, 7.3, 1.5, warna_isi=RGBColor(0x14, 0x2C, 0x50), garis=RGBColor(0x3A, 0x52, 0x7C), radius=0.1)
     kotak_teks(s, 1.12, 5.95, 1.5, 0.3, "TAUTAN", ukuran=10.5, tebal=True, warna=KUNING)
     kotak_teks(s, 1.12, 6.28, 6.9, 0.9,
-               "GitHub: github.com/irgidev/pupukpintar\nFigma: figma.com/design/rSkPUlILq9yMteqXRwDBHF/PupukPintar\nAplikasi demo: http://127.0.0.1:8000\nVideo: drive.google.com/drive/folders/1hZzJHdhQZEa4-a4qC8jQDy1sYrweZVA1",
+               "GitHub: github.com/irgidev/pupukpintar\nFigma: figma.com/design/rSkPUlILq9yMteqXRwDBHF/PupukPintar\nAplikasi demo: https://pupukpintar.vercel.app\nVideo: drive.google.com/drive/folders/1hZzJHdhQZEa4-a4qC8jQDy1sYrweZVA1",
                ukuran=10.5, warna=PUTIH, baris=1.3)
     kotak_teks(s, 8.5, 6.3, 4.2, 0.4, "Tanya jawab  ·  PupukPintar  ·  Kelompok 14", ukuran=12, warna=ABU_TERANG, rata=PP_ALIGN.RIGHT)
 
