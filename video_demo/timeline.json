@@ -1,95 +1,108 @@
 [
  {
-  "mulai": 1.76,
+  "mulai": 1.78,
   "durasi": 4.0,
   "teks": "Halaman pembuka PupukPintar: aplikasi rekomendasi dosis pupuk N-P-K per lahan",
-  "panah": null
+  "panah": null,
+  "anchor": "anchor_00.png"
  },
  {
-  "mulai": 3.55,
+  "mulai": 3.68,
   "durasi": 2.2,
   "teks": "Pengguna menyetujui pengelolaan data sebelum memakai aplikasi",
   "panah": [
-   60,
-   1058
-  ]
+   41,
+   460
+  ],
+  "anchor": "anchor_01.png"
  },
  {
-  "mulai": 6.2,
+  "mulai": 6.38,
   "durasi": 3.4,
   "teks": "Beranda: ringkasan lahan aktif dan pintasan cepat ke fitur utama",
-  "panah": null
+  "panah": null,
+  "anchor": "anchor_02.png"
  },
  {
-  "mulai": 15.02,
+  "mulai": 15.01,
   "durasi": 5.0,
   "teks": "Peta vektor 191 unit lahan SAFRONS wilayah Bogor, bekerja tanpa internet",
   "panah": [
-   190,
-   1520
-  ]
+   195,
+   600
+  ],
+  "anchor": "anchor_03.png"
  },
  {
-  "mulai": 17.23,
+  "mulai": 17.42,
   "durasi": 4.5,
   "teks": "Unit Bogor dipilih: peta membesarkan unit dengan label nama",
   "panah": [
-   390,
-   1280
-  ]
+   180,
+   637
+  ],
+  "anchor": "anchor_04.png"
  },
  {
-  "mulai": 25.92,
+  "mulai": 27.49,
   "durasi": 3.4,
   "teks": "Lahan tersimpan: unit peta, pH, dan status hara ikut tercatat",
-  "panah": null
+  "panah": null,
+  "anchor": "anchor_05.png"
  },
  {
-  "mulai": 29.44,
+  "mulai": 31.01,
   "durasi": 4.6,
   "teks": "Formulir rekomendasi: pilih petak lahan, komoditas, dan target hasil",
   "panah": [
    190,
    1620
-  ]
+  ],
+  "anchor": "anchor_06.png"
  },
  {
-  "mulai": 32.6,
+  "mulai": 34.01,
   "durasi": 5.0,
   "teks": "Hasil AI: dosis N-P-K per lahan dengan tingkat keyakinan model",
   "panah": [
    390,
    800
-  ]
+  ],
+  "anchor": "anchor_07.png"
  },
  {
-  "mulai": 35.75,
+  "mulai": 37.19,
   "durasi": 3.4,
   "teks": "Paket sesuai modal: kebutuhan pupuk per petak dan estimasi biaya berubah",
-  "panah": null
+  "panah": null,
+  "anchor": "anchor_08.png"
  },
  {
-  "mulai": 40.93,
+  "mulai": 42.41,
   "durasi": 3.2,
   "teks": "Hasil dikirim ke penyuluh untuk verifikasi sebelum dipakai",
-  "panah": null
+  "panah": null,
+  "anchor": "anchor_09.png"
  },
  {
-  "mulai": 43.54,
+  "mulai": 45.01,
   "durasi": 3.2,
   "teks": "Riwayat rekomendasi tersimpan per petak dan per musim",
-  "panah": null
+  "panah": null,
+  "anchor": "anchor_10.png"
  },
  {
-  "mulai": 46.6,
+  "mulai": 48.29,
   "durasi": 3.4,
   "teks": "Papan penyuluhan: tips pemupukan dan verifikasi oleh penyuluh",
-  "panah": null
+  "panah": null,
+  "anchor": "anchor_11.png"
  },
  {
-  "mulai": 49.56,
-  "durasi": 4.2,
+  "mulai": 52.86,
+  "durasi": 4.6,
   "teks": "Profil: metrik model transparan (agreement 95 persen pada data uji)",
-  "panah": null
+  "panah": null,
+  "anchor": "anchor_12.png"
  }
 ]

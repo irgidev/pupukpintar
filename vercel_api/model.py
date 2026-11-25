@@ -116,10 +116,10 @@ def prediksi(payload):
     baris[f"Tekstur_{payload['tekstur']}"] = 1
     baris[f"Komoditas_{payload['komoditas']}"] = 1
     baris[f"Musim_{payload['musim']}"] = 1
-    X = [baris[k] for k in KOLOM_X]
+    X = np.array([[baris[k] for k in KOLOM_X]], dtype=float)
 
     dosis = model.predict(X)[0]
-    pohon = np.stack([est.predict(X.to_numpy())[0] for est in model.estimators_])
+    pohon = np.stack([est.predict(X)[0] for est in model.estimators_])
     cv_relatif = float((pohon.std(axis=0) / np.maximum(pohon.mean(axis=0), 1e-9)).mean())
     keyakinan = float(max(0.0, min(1.0, 1 - cv_relatif * 2)))
     return dosis, keyakinan

@@ -33,7 +33,11 @@ window.__gerak = (x, y) => {
         el.style.cssText = 'position:fixed;width:26px;height:26px;border-radius:50%;'
             + 'background:rgba(15,40,70,0.82);border:3px solid #F2C14E;'
             + 'z-index:99999;pointer-events:none;left:60%;top:35%;'
-            + 'transition:left 0.22s ease-out, top 0.22s ease-out;';
+            + 'transition:left 0.22s ease-out, top 0.22s ease-out;'
+            + 'animation:ppdenyut 1s ease-in-out infinite;';
+        const gaya = document.createElement('style');
+        gaya.textContent = '@keyframes ppdenyut { 50% { opacity: 0.55; } }';
+        document.head.appendChild(gaya);
         (document.body || document.documentElement).appendChild(el);
     }
     el.style.left = x + 'px';
@@ -51,7 +55,7 @@ def main():
         konteks = browser.new_context(
             viewport={"width": LEBAR, "height": TINGGI},
             record_video_dir=KELUAR,
-            record_video_size={"width": LEBAR * 2, "height": TINGGI * 2},
+            record_video_size={"width": LEBAR, "height": TINGGI},
             locale="id-ID",
         )
         hal = konteks.new_page()
@@ -99,8 +103,10 @@ def main():
             jeda(250)
 
         def catat(mulai, durasi, teks, panah=None):
+            nama = "anchor_%02d.png" % len(timeline)
+            hal.screenshot(path=os.path.join(KELUAR, nama))
             timeline.append({"mulai": round(mulai - t0, 2), "durasi": round(durasi, 2),
-                             "teks": teks, "panah": panah})
+                             "teks": teks, "panah": panah, "anchor": nama})
 
         # ---------- 0. pembuka: splash dan persetujuan ----------
         hal.goto("http://127.0.0.1:8000")
@@ -109,7 +115,7 @@ def main():
         m = time.time()
         catat(m, 4.0, "Halaman pembuka PupukPintar: aplikasi rekomendasi dosis pupuk N-P-K per lahan")
         klik_pemilih("#cek-setuju")
-        catat(time.time(), 2.2, "Pengguna menyetujui pengelolaan data sebelum memakai aplikasi", [60, 1058])
+        catat(time.time(), 2.2, "Pengguna menyetujui pengelolaan data sebelum memakai aplikasi", [41, 460])
         klik_pemilih("#tombol-masuk")
         hal.wait_for_selector("#v-beranda:not([hidden])")
         jeda(900)
@@ -131,15 +137,15 @@ def main():
         jeda(900)
         m = time.time()
         catat(m, 5.0, "Peta vektor 191 unit lahan SAFRONS wilayah Bogor, bekerja tanpa internet",
-              [190, 1520])
+              [195, 600])
         jeda(700)
 
         titik = hal.evaluate("window.__ppPeta.latlngKeKlien(-6.6, 106.8)")
         klik(titik)
         hal.wait_for_selector("#area-pakai", timeout=8000)
         catat(time.time(), 4.5, "Unit Bogor dipilih: peta membesarkan unit dengan label nama",
-              [390, 1280])
-        jeda(500)
+              [180, 637])
+        jeda(1800)
         isi("#area-nama", "Sawah Bogor Uji")
         isi("#area-luas", "0.75")
         klik_pemilih("#area-pakai")
@@ -191,16 +197,16 @@ def main():
         m = time.time()
         catat(m, 3.4, "Papan penyuluhan: tips pemupukan dan verifikasi oleh penyuluh")
         hal.screenshot(path=os.path.join(KELUAR, "b_05_penyuluhan.png"))
-        jeda(600)
+        jeda(2200)
 
         klik_pemilih(".nav-item[data-buka='profil']")
         hal.wait_for_selector("#v-profil:not([hidden])")
         hal.wait_for_function("document.querySelector('#profil-model').textContent.includes('Random Forest')", timeout=15000)
-        jeda(600)
+        jeda(500)
         m = time.time()
-        catat(m, 4.2, "Profil: metrik model transparan (agreement 95 persen pada data uji)")
+        catat(m, 4.6, "Profil: metrik model transparan (agreement 95 persen pada data uji)")
         hal.screenshot(path=os.path.join(KELUAR, "b_06_profil.png"))
-        jeda(600)
+        jeda(2600)
 
         video = hal.video.path()
         konteks.close()
