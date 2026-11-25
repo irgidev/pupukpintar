@@ -9,3 +9,6 @@ laporan/render/
 presentasi/render/
 laporan/pembangkit/halaman_toi.json
 laporan/cek_*.png
+
+.vercel
+.env*

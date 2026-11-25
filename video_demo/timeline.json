@@ -1,0 +1,95 @@
+[
+ {
+  "mulai": 1.76,
+  "durasi": 4.0,
+  "teks": "Halaman pembuka PupukPintar: aplikasi rekomendasi dosis pupuk N-P-K per lahan",
+  "panah": null
+ },
+ {
+  "mulai": 3.55,
+  "durasi": 2.2,
+  "teks": "Pengguna menyetujui pengelolaan data sebelum memakai aplikasi",
+  "panah": [
+   60,
+   1058
+  ]
+ },
+ {
+  "mulai": 6.2,
+  "durasi": 3.4,
+  "teks": "Beranda: ringkasan lahan aktif dan pintasan cepat ke fitur utama",
+  "panah": null
+ },
+ {
+  "mulai": 15.02,
+  "durasi": 5.0,
+  "teks": "Peta vektor 191 unit lahan SAFRONS wilayah Bogor, bekerja tanpa internet",
+  "panah": [
+   190,
+   1520
+  ]
+ },
+ {
+  "mulai": 17.23,
+  "durasi": 4.5,
+  "teks": "Unit Bogor dipilih: peta membesarkan unit dengan label nama",
+  "panah": [
+   390,
+   1280
+  ]
+ },
+ {
+  "mulai": 25.92,
+  "durasi": 3.4,
+  "teks": "Lahan tersimpan: unit peta, pH, dan status hara ikut tercatat",
+  "panah": null
+ },
+ {
+  "mulai": 29.44,
+  "durasi": 4.6,
+  "teks": "Formulir rekomendasi: pilih petak lahan, komoditas, dan target hasil",
+  "panah": [
+   190,
+   1620
+  ]
+ },
+ {
+  "mulai": 32.6,
+  "durasi": 5.0,
+  "teks": "Hasil AI: dosis N-P-K per lahan dengan tingkat keyakinan model",
+  "panah": [
+   390,
+   800
+  ]
+ },
+ {
+  "mulai": 35.75,
+  "durasi": 3.4,
+  "teks": "Paket sesuai modal: kebutuhan pupuk per petak dan estimasi biaya berubah",
+  "panah": null
+ },
+ {
+  "mulai": 40.93,
+  "durasi": 3.2,
+  "teks": "Hasil dikirim ke penyuluh untuk verifikasi sebelum dipakai",
+  "panah": null
+ },
+ {
+  "mulai": 43.54,
+  "durasi": 3.2,
+  "teks": "Riwayat rekomendasi tersimpan per petak dan per musim",
+  "panah": null
+ },
+ {
+  "mulai": 46.6,
+  "durasi": 3.4,
+  "teks": "Papan penyuluhan: tips pemupukan dan verifikasi oleh penyuluh",
+  "panah": null
+ },
+ {
+  "mulai": 49.56,
+  "durasi": 4.2,
+  "teks": "Profil: metrik model transparan (agreement 95 persen pada data uji)",
+  "panah": null
+ }
+]

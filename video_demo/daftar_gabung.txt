@@ -1,0 +1,7 @@
+file C:/Documents/Desktop/Project/PPKBP/pupukpintar/video_demo/seg_intro.mp4
+file C:/Documents/Desktop/Project/PPKBP/pupukpintar/video_demo/seg_main_01.mp4
+file C:/Documents/Desktop/Project/PPKBP/pupukpintar/video_demo/seg_main_02.mp4
+file C:/Documents/Desktop/Project/PPKBP/pupukpintar/video_demo/seg_main_03.mp4
+file C:/Documents/Desktop/Project/PPKBP/pupukpintar/video_demo/seg_main_04.mp4
+file C:/Documents/Desktop/Project/PPKBP/pupukpintar/video_demo/seg_main_05.mp4
+file C:/Documents/Desktop/Project/PPKBP/pupukpintar/video_demo/seg_outro.mp4

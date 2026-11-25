@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "vercel_api/index.py",
+      "use": "@vercel/python",
+      "config": {
+        "includeFiles": "model.joblib,metrik_model.json,frontend/**"
+      }
+    }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "vercel_api/index.py" }
+  ]
+}

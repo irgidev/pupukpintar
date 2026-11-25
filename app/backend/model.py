@@ -27,7 +27,15 @@ from konstanta import (
     RENTANG_AMAN,
     SEBARAN_DATA_LATIH,
 )
-from data_proxy import KOLOM_X
+
+# Urutan kolom harus sama dengan KOLOM_X pada data_proxy; dideklarasikan lokal
+# agar inferensi tersaji tidak bergantung pada modul pelatihan data.
+KOLOM_X = [
+    "pH", "N_persen", "P_ppm", "K_me100g", "Target_Hasil",
+    "Tekstur_Lempung", "Tekstur_Lempung Liat", "Tekstur_Liat",
+    "Komoditas_Padi", "Komoditas_Jagung",
+    "Musim_Hujan", "Musim_Kemarau",
+]
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "model.joblib")
 METRIK_PATH = os.path.join(os.path.dirname(__file__), "metrik_model.json")
