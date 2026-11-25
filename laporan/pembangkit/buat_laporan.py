@@ -854,7 +854,7 @@ def bab8():
     p("Tujuan dan hipotesis uji: model mencapai agreement pakar minimal 85 sampai 90 persen pada data yang tidak dipakai melatih, guardrail tidak pernah melepas keluaran di luar rentang aman, dan petani dengan literasi digital umum menyelesaikan alur dari beranda sampai hasil dalam maksimal lima ketukan tanpa tersesat.")
     p("Waktu dan cara uji: pengujian model dan API berlangsung terotomasi pada mesin pengembangan (pytest, 12 pengujian), pengujian antarmuka berlangsung terotomasi dengan Playwright pada Chromium lebar 390 piksel (20 langkah), dan pengukuran latensi API berlangsung dengan 30 permintaan beruntun. Semua uji dapat diulang dengan perintah pada README repositori.")
     tabel("Tabel 8.1 Profil penguji dan kedudukannya", ["Kode", "Peran", "Keterangan", "Catatan jujur"], [
-        ["U-01 sampai U-03", "Anggota tim sebagai penguji alur (tiga orang)", "Menjalankan dan memeriksa 18 langkah uji perjalanan", "Anggota tim bukan pengguna sasaran. Uji petani sasaran dijadwalkan pada pilot Bab 11, status ini juga dicatat di Bab 12.2"],
+        ["U-01 sampai U-03", "Anggota tim sebagai penguji alur (tiga orang)", "Menjalankan dan memeriksa 20 langkah uji perjalanan", "Anggota tim bukan pengguna sasaran. Uji petani sasaran dijadwalkan pada pilot Bab 11, status ini juga dicatat di Bab 12.2"],
     ], lebar=[2.6, 4.2, 5.2, 4.0], ukuran=9.5)
     tabel("Tabel 8.2 Skenario uji", ["ID", "Skenario atau tugas", "Fitur (ID)", "Kriteria berhasil"], [
         ["S-01", "Masuk aplikasi tanpa mencentang persetujuan lalu dengan mencentang", "F-01", "Pesan galat tampil tanpa centang, masuk berhasil dengan centang"],
@@ -1154,7 +1154,7 @@ def bab12():
     daftar_periksa([
         ["Kotak petunjuk template, baris contoh, dan teks abu-abu sudah dihapus atau diganti", "Terpenuhi, seluruh isi diganti data kelompok"],
         ["Tautan pada Lampiran B bisa dibuka dari akun lain", "Terpenuhi untuk GitHub (publik) dan Figma, aplikasi demo berjalan lokal dengan petunjuk README"],
-        ["Angka Ringkasan Eksekutif sama dengan angka bab terkait", "Terpenuhi (agreement, MAE, latensi, 12 pengujian, 18 langkah)"],
+        ["Angka Ringkasan Eksekutif sama dengan angka bab terkait", "Terpenuhi (agreement, MAE, latensi, 12 pengujian, 20 langkah)"],
         ["ID fitur konsisten di Bab 5, 6, 7, dan 8", "Terpenuhi (F-01 sampai F-08, S-01 sampai S-07)"],
         ["Setiap gambar dan tabel bernomor, berjudul, dan dirujuk di teks", "Terpenuhi"],
         ["Daftar isi sudah diperbarui", "Terpenuhi (nomor halaman dari render final)"],

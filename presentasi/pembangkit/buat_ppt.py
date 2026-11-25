@@ -445,7 +445,7 @@ def slide6():
             sel.fill.solid()
             sel.fill.fore_color.rgb = BIRU if r == 0 else (PUTIH_SUSU if r % 2 else PUTIH)
 
-    kartu(s, 0.55, 5.75, 2.5, 1.35, isi="18/18", isi_ukuran=30, isi_rata=PP_ALIGN.CENTER, isi_warna=BIRU)
+    kartu(s, 0.55, 5.75, 2.5, 1.35, isi="20/20", isi_ukuran=30, isi_rata=PP_ALIGN.CENTER, isi_warna=BIRU)
     kotak_teks(s, 0.65, 6.6, 2.3, 0.45, "langkah uji antarmuka lulus, tanpa galat konsol", ukuran=9.5, warna=ABU, rata=PP_ALIGN.CENTER, baris=1.1)
     kartu(s, 3.25, 5.75, 2.5, 1.35, isi="95,2%", isi_ukuran=30, isi_rata=PP_ALIGN.CENTER, isi_warna=BIRU)
     kotak_teks(s, 3.35, 6.6, 2.3, 0.45, "agreement rekomendasi pada data uji terpisah", ukuran=9.5, warna=ABU, rata=PP_ALIGN.CENTER, baris=1.1)
@@ -461,7 +461,7 @@ def slide6():
           isi_ukuran=10.5)
 
     catatan(s, "SLIDE 6 BUKTI KUALITAS (1 sampai 1,5 menit). Ambang MVQ sama dengan Bab 4.4 dan ditetapkan sebelum pengujian. "
-               "Sebut siapa penguji: 12 pengujian pytest dan 18 langkah Playwright oleh tim, dan katakan jujur bahwa petani sasaran "
+               "Sebut siapa penguji: 12 pengujian pytest dan 20 langkah Playwright oleh tim, dan katakan jujur bahwa petani sasaran "
                "belum menjadi penguji. Penilai lebih menghargai pelaporan temuan buruk daripada angka sempurna.")
     return s
 
