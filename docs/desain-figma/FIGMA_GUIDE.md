@@ -4,6 +4,12 @@ Berkas Figma utama proyek: https://www.figma.com/design/rSkPUlILq9yMteqXRwDBHF/P
 (berisi wireframe low-fidelity tiga layar dari LKP-P6). Berkas SVG pada folder ini adalah
 kelanjutan high-fidelity dari wireframe tersebut.
 
+Status: ketiga layar high-fidelity SUDAH dibangun di dalam berkas Figma pada baris kedua
+kanvas (frame "HiFi 1/2/3 - ... (High-Fidelity)" dengan judul bagian "HIGH-FIDELITY"),
+dibangun lewat MCP talk-to-figma dengan token desain yang sama dengan tabel di bawah.
+SVG di folder ini dipertahankan sebagai sumber acuan dan bisa dipakai ulang bila layar
+perlu dibuat ulang.
+
 ## Isi folder
 
 | Berkas | Isi |
@@ -13,7 +19,7 @@ kelanjutan high-fidelity dari wireframe tersebut.
 | `layar-3-hasil.svg` | Layar hasil: badge keyakinan, tiga kartu dosis, kebutuhan per petak, estimasi biaya, paket, penjelasan, peringatan, disclaimer |
 | `buat_desain_svg.py` | Pembangkit ketiga SVG (jalankan `python buat_desain_svg.py` untuk membuat ulang) |
 
-## Cara memasukkan ke Figma
+## Cara memasukkan ulang ke Figma (bila perlu)
 
 1. Buka berkas Figma PupukPintar di atas.
 2. Seret ketiga berkas SVG langsung ke kanvas (Figma mengimpor SVG sebagai layer yang dapat diedit).
